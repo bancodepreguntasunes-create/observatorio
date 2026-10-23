@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Observatorio de Paz — Cartografía GIS</title>
+  <meta name="description" content="Visor Geoespacial de Diagnóstico y Cartografía de Convivencia Universitaria — Sede Piloto Caracas">
+  
+  <!-- Google Fonts Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome 6 CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Design System CSS -->
+  <link rel="stylesheet" href="/css/styles.css">
+  
+  <style>
+    /* Custom GIS page refinements */
+    .gis-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: var(--space-xl);
+      align-items: start;
+      position: relative;
+    }
+    
+    .map-card {
+      position: relative;
+      overflow: hidden;
+      padding: var(--space-lg);
+    }
+    
+    .map-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-md);
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+
+    .quadrant {
+      cursor: pointer;
+      transition: all 0.25s ease;
+      stroke: rgba(148, 163, 184, 0.4);
+      stroke-width: 1.5;
+    }
+
+    .quadrant:hover {
+      stroke: var(--accent-cyan);
+      stroke-width: 3;
+      filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.6));
+    }
+
+    .quadrant.selected {
+      stroke: #ffffff !important;
+      stroke-width: 3.5 !important;
+      filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.7));
+    }
+
+    .quadrant-tag {
+      font-size: 13px;
+      font-weight: 800;
+      fill: #ffffff;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8), 0 0 8px rgba(0,0,0,0.5);
+      pointer-events: none;
+    }
+
+    .quadrant-subtag {
+      font-size: 10px;
+      font-weight: 500;
+      fill: rgba(255, 255, 255, 0.9);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+      pointer-events: none;
+    }
+
+    .map-road {
+      stroke: rgba(148, 163, 184, 0.25);
+      stroke-width: 12;
+      stroke-linecap: round;
+      fill: none;
+    }
+
+    .map-road-marking {
+      stroke: rgba(255, 255, 255, 0.35);
+      stroke-width: 1.5;
+      stroke-dasharray: 6 6;
+      fill: none;
+    }
+
+    .map-walkway {
+      stroke: rgba(148, 163, 184, 0.18);
+      stroke-width: 4;
+      stroke-dasharray: 2 3;
+      fill: none;
+    }
+
+    .tree-icon {
+      fill: #10b981;
+      opacity: 0.65;
+    }
+
+    /* Fixed/Floating Diagnostic Card in column */
+    .diagnostic-panel {
+      position: sticky;
+      top: 90px;
+    }
+
+    .diagnostic-stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-sm);
+      margin: var(--space-md) 0;
+    }
+
+    .mini-stat {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: var(--space-sm);
+      text-align: center;
+    }
+
+    .mini-stat-value {
+      font-size: var(--font-size-lg);
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .mini-stat-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .risk-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--color-danger-light);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      margin: 2px;
+    }
+
+    .recommendation-box {
+      background: rgba(59, 130, 246, 0.08);
+      border-left: 3px solid var(--accent-blue);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      padding: var(--space-sm) var(--space-md);
+      font-size: var(--font-size-xs);
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-top: var(--space-md);
+    }
+
+    @media (max-width: 1024px) {
+      .gis-layout {
+        grid-template-columns: 1fr;
+      }
+      .diagnostic-panel {
+        position: static;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand">
+        <div class="brand-icon">🕊️</div>
+        <span>Observatorio de Paz</span>
+      </a>
+      <nav>
+        <ul class="navbar-links">
+          <li><a href="/"><i class="fa-solid fa-clipboard-list"></i> Formulario</a></li>
+          <li><a href="/cartografia" class="active"><i class="fa-solid fa-map-location-dot"></i> Cartografía</a></li>
+          <li><a href="/admin"><i class="fa-solid fa-chart-line"></i> Panel Admin</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="badge badge-blue mb-sm animate-in">
+        <i class="fa-solid fa-layer-group"></i> Sistema de Información Geográfica (GIS)
+      </div>
+      <h1 class="animate-in">Cartografía de Convivencia Universitaria</h1>
+      <p class="animate-in">Visor Geoespacial de Diagnóstico — Campus Caracas. Monitoreo térmico multidimensional de seguridad, victimización y factores de riesgo.</p>
+    </div>
+  </section>
+
+  <!-- Main Container -->
+  <main class="container mb-3xl">
+
+    <!-- Filter Bar -->
+    <div class="card filter-bar animate-in">
+      <div class="flex items-center gap-sm text-secondary" style="font-size: var(--font-size-sm); font-weight: 600;">
+        <i class="fa-solid fa-filter text-primary"></i>
+        <span>Filtros GIS:</span>
+      </div>
+      
+      <!-- Filter: Rol -->
+      <select id="filter-rol" class="form-select" aria-label="Filtrar por Rol">
+        <option value="">Rol: Todos los roles</option>
+        <option value="Estudiante">Estudiante</option>
+        <option value="Docente">Docente</option>
+        <option value="Administrativo">Personal Administrativo</option>
+        <option value="Obrero">Personal Obrero</option>
+      </select>
+
+      <!-- Filter: Turno -->
+      <select id="filter-turno" class="form-select" aria-label="Filtrar por Turno">
+        <option value="">Turno: Todos los turnos</option>
+        <option value="Diurno">Turno Diurno</option>
+        <option value="Nocturno">Turno Nocturno</option>
+        <option value="Fines de semana">Fines de semana</option>
+      </select>
+
+      <!-- Filter: Motivo -->
+      <select id="filter-motivo" class="form-select" aria-label="Filtrar por Motivo de Riesgo">
+        <option value="">Motivo: Todos los factores</option>
+        <option value="Iluminación deficiente">Iluminación deficiente</option>
+        <option value="Zonas aisladas">Zonas aisladas</option>
+        <option value="Accesos no vigilados">Accesos no vigilados</option>
+        <option value="Aglomeraciones">Aglomeraciones</option>
+        <option value="Infraestructura deteriorada">Infraestructura deteriorada</option>
+        <option value="Falta de cámaras">Falta de cámaras</option>
+        <option value="Ausencia de vigilancia">Ausencia de vigilancia</option>
+      </select>
+
+      <button id="btn-apply-filters" class="btn btn-primary btn-sm">
+        <i class="fa-solid fa-magnifying-glass"></i> Aplicar Filtros
+      </button>
+
+      <button id="btn-reset-filters" class="btn btn-secondary btn-sm" title="Restablecer filtros">
+        <i class="fa-solid fa-rotate-left"></i> Restablecer
+      </button>
+
+      <div id="filter-status" class="flex items-center ml-auto text-xs text-muted">
+        <span class="semaphore-dot green" style="width: 8px; height: 8px; margin-right: 6px;"></span>
+        <span>Capa en tiempo real activa</span>
+      </div>
+    </div>
+
+    <!-- GIS Map + Diagnostic Panel Layout -->
+    <div class="gis-layout">
+      
+      <!-- Left: Interactive Map -->
+      <div class="card map-card">
+        <div class="map-header">
+          <div>
+            <h3 class="card-title" style="display:flex; align-items:center; gap:8px;">
+              <i class="fa-solid fa-map text-primary"></i>
+              <span>Plano Vectorial del Campus — Cuadrantes C1 a C8</span>
+            </h3>
+            <p class="card-subtitle">Haz clic en cualquier cuadrante para desplegar la ficha diagnóstica táctica</p>
+          </div>
+          <div class="flex gap-sm">
+            <span class="badge badge-cyan" id="active-quadrant-indicator">
+              <i class="fa-regular fa-hand-pointer"></i> Selecciona un cuadrante
+            </span>
+          </div>
+        </div>
+
+        <!-- Campus SVG Map Container -->
+        <div class="campus-map-container">
+          <div class="campus-map">
+            <svg id="campus-svg" viewBox="0 0 700 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Plano Interactivo del Campus Caracas">
+              <defs>
+                <!-- Shadows & Filters -->
+                <filter id="glow-selected" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="4" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+                
+                <!-- Campus Grid Pattern -->
+                <pattern id="campus-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(148, 163, 184, 0.04)" stroke-width="1"/>
+                </pattern>
+                
+                <!-- Heat Gradients -->
+                <linearGradient id="road-grad-h" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#1e293b" stop-opacity="0.9"/>
+                  <stop offset="50%" stop-color="#334155" stop-opacity="0.95"/>
+                  <stop offset="100%" stop-color="#1e293b" stop-opacity="0.9"/>
+                </linearGradient>
+              </defs>
+
+              <!-- Map Background Base -->
+              <rect x="0" y="0" width="700" height="500" rx="16" fill="#0f172a" />
+              <rect x="0" y="0" width="700" height="500" rx="16" fill="url(#campus-grid)" />
+
+              <!-- Campus Outer Greenery Boundary -->
+              <path d="M 20 20 L 680 20 L 680 480 L 20 480 Z" fill="none" stroke="rgba(16, 185, 129, 0.2)" stroke-width="2" stroke-dasharray="8 6" />
+
+              <!-- ── Internal Campus Road Network ── -->
+              <!-- Main Vertical Boulevard (Bulevar Central de la Paz) -->
+              <path d="M 350 20 L 350 480" class="map-road" />
+              <path d="M 350 25 L 350 475" class="map-road-marking" />
+
+              <!-- Horizontal Transversals -->
+              <path d="M 20 145 L 680 145" class="map-road" />
+              <path d="M 25 145 L 675 145" class="map-road-marking" />
+
+              <path d="M 20 265 L 680 265" class="map-road" />
+              <path d="M 25 265 L 675 265" class="map-road-marking" />
+
+              <path d="M 20 385 L 680 385" class="map-road" />
+              <path d="M 25 385 L 675 385" class="map-road-marking" />
+
+              <!-- Diagonal Walkways / Paseos -->
+              <path d="M 190 20 L 350 145" class="map-walkway" />
+              <path d="M 510 20 L 350 145" class="map-walkway" />
+              <path d="M 350 385 L 190 480" class="map-walkway" />
+              <path d="M 350 385 L 510 480" class="map-walkway" />
+
+              <!-- Central Plaza / Plaza Cubierta (Hub) -->
+              <circle cx="350" cy="265" r="28" fill="#1e293b" stroke="var(--accent-blue)" stroke-width="2" />
+              <circle cx="350" cy="265" r="16" fill="rgba(59, 130, 246, 0.2)" stroke="var(--accent-cyan)" stroke-width="1.5" />
+              <circle cx="350" cy="265" r="5" fill="var(--accent-cyan-light)" />
+              <text x="350" y="270" text-anchor="middle" font-size="7" fill="white" font-weight="700">PLAZA</text>
+
+              <!-- Decorative Trees (Small Clusters) -->
+              <g class="tree-cluster">
+                <circle cx="330" cy="80" r="5" class="tree-icon" />
+                <circle cx="370" cy="80" r="6" class="tree-icon" />
+                <circle cx="330" cy="200" r="6" class="tree-icon" />
+                <circle cx="370" cy="200" r="5" class="tree-icon" />
+                <circle cx="330" cy="330" r="5" class="tree-icon" />
+                <circle cx="370" cy="330" r="6" class="tree-icon" />
+                <circle cx="330" cy="440" r="6" class="tree-icon" />
+                <circle cx="370" cy="440" r="5" class="tree-icon" />
+                <!-- Peripheral greenery -->
+                <circle cx="35" cy="40" r="7" class="tree-icon" />
+                <circle cx="665" cy="40" r="7" class="tree-icon" />
+                <circle cx="35" cy="460" r="8" class="tree-icon" />
+                <circle cx="665" cy="460" r="9" class="tree-icon" />
+              </g>
+
+              <!-- ── 8 CAMPUS QUADRANTS (C1 - C8) ── -->
+
+              <!-- C1: Zona Rectorado (Top-Left) -->
+              <polygon id="quadrant-C1" class="quadrant heat-0" data-zone="C1" data-name="Zona Rectorado"
+                points="40,35 220,35 325,48 325,128 215,133 40,128" />
+              <text x="175" y="75" class="quadrant-label quadrant-tag">C1</text>
+              <text x="175" y="93" class="quadrant-label quadrant-subtag">Zona Rectorado</text>
+
+              <!-- C2: Facultad de Ingeniería (Top-Right) -->
+              <polygon id="quadrant-C2" class="quadrant heat-0" data-zone="C2" data-name="Facultad de Ingeniería"
+                points="375,48 480,35 660,35 660,128 485,133 375,128" />
+              <text x="525" y="75" class="quadrant-label quadrant-tag">C2</text>
+              <text x="525" y="93" class="quadrant-label quadrant-subtag">Facultad de Ingeniería</text>
+
+              <!-- C3: Estacionamientos (Mid-Left 1) -->
+              <polygon id="quadrant-C3" class="quadrant heat-0" data-zone="C3" data-name="Estacionamientos"
+                points="40,160 215,155 325,160 325,248 210,252 40,248" />
+              <text x="175" y="195" class="quadrant-label quadrant-tag">C3</text>
+              <text x="175" y="213" class="quadrant-label quadrant-subtag">Estacionamientos</text>
+
+              <!-- C4: Biblioteca Central (Mid-Right 1) -->
+              <polygon id="quadrant-C4" class="quadrant heat-0" data-zone="C4" data-name="Biblioteca Central"
+                points="375,160 485,155 660,160 660,248 490,252 375,248" />
+              <text x="525" y="195" class="quadrant-label quadrant-tag">C4</text>
+              <text x="525" y="213" class="quadrant-label quadrant-subtag">Biblioteca Central</text>
+
+              <!-- C5: Comedor Universitario (Mid-Left 2) -->
+              <polygon id="quadrant-C5" class="quadrant heat-0" data-zone="C5" data-name="Comedor Universitario"
+                points="40,280 210,276 325,280 325,368 215,372 40,368" />
+              <text x="175" y="315" class="quadrant-label quadrant-tag">C5</text>
+              <text x="175" y="333" class="quadrant-label quadrant-subtag">Comedor Universitario</text>
+
+              <!-- C6: Canchas Deportivas (Mid-Right 2) -->
+              <polygon id="quadrant-C6" class="quadrant heat-0" data-zone="C6" data-name="Canchas Deportivas"
+                points="375,280 490,276 660,280 660,368 480,372 375,368" />
+              <text x="525" y="315" class="quadrant-label quadrant-tag">C6</text>
+              <text x="525" y="333" class="quadrant-label quadrant-subtag">Canchas Deportivas</text>
+
+              <!-- C7: Residencias Estudiantiles (Bottom-Left) -->
+              <polygon id="quadrant-C7" class="quadrant heat-0" data-zone="C7" data-name="Residencias"
+                points="40,400 215,396 325,400 325,465 190,465 40,460" />
+              <text x="175" y="425" class="quadrant-label quadrant-tag">C7</text>
+              <text x="175" y="443" class="quadrant-label quadrant-subtag">Residencias</text>
+
+              <!-- C8: Jardín Botánico (Bottom-Right) -->
+              <polygon id="quadrant-C8" class="quadrant heat-0" data-zone="C8" data-name="Jardín Botánico"
+                points="375,400 485,396 660,400 660,460 510,465 375,465" />
+              <text x="525" y="425" class="quadrant-label quadrant-tag">C8</text>
+              <text x="525" y="443" class="quadrant-label quadrant-subtag">Jardín Botánico</text>
+
+              <!-- Map Elements: Compass & Scale -->
+              <g transform="translate(635, 30)">
+                <circle cx="15" cy="15" r="14" fill="#1e293b" stroke="rgba(148,163,184,0.4)" stroke-width="1"/>
+                <polygon points="15,4 19,15 15,13 11,15" fill="#ef4444" />
+                <polygon points="15,26 19,15 15,17 11,15" fill="#94a3b8" />
+                <text x="15" y="3" text-anchor="middle" font-size="8" font-weight="800" fill="#f87171">N</text>
+              </g>
+
+              <g transform="translate(45, 470)">
+                <line x1="0" y1="0" x2="60" y2="0" stroke="rgba(255,255,255,0.7)" stroke-width="2" />
+                <line x1="0" y1="-3" x2="0" y2="3" stroke="rgba(255,255,255,0.7)" stroke-width="2" />
+                <line x1="60" y1="-3" x2="60" y2="3" stroke="rgba(255,255,255,0.7)" stroke-width="2" />
+                <text x="30" y="-5" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.7)">100 m</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Color Legend Gradient -->
+        <div class="legend mt-lg">
+          <div class="text-xs font-semibold text-secondary mr-sm">
+            <i class="fa-solid fa-temperature-three-quarters"></i> Nivel de Calor:
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: var(--heat-0);"></div>
+            <span>Tranquilidad (0 - 0.20)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: var(--heat-1);"></div>
+            <span>Riesgo Bajo (0.21 - 0.40)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: var(--heat-2);"></div>
+            <span>Riesgo Moderado (0.41 - 0.55)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: var(--heat-3);"></div>
+            <span>Alerta Preventiva (0.56 - 0.70)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: var(--heat-4);"></div>
+            <span>Riesgo Alto (0.71 - 0.85)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: var(--heat-5);"></div>
+            <span>Alerta Crítica (0.86 - 1.00)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Diagnostic Card Panel -->
+      <aside class="diagnostic-panel">
+        
+        <!-- Placeholder State (Shown when no quadrant is active) -->
+        <div id="diagnostic-placeholder" class="card text-center" style="padding: var(--space-2xl) var(--space-lg);">
+          <div class="card-icon blue mx-auto mb-md" style="margin: 0 auto var(--space-md);">
+            <i class="fa-solid fa-crosshairs"></i>
+          </div>
+          <h4 class="card-title">Ficha Diagnóstica Táctica</h4>
+          <p class="text-secondary text-sm mt-sm mb-lg">
+            Haz clic sobre cualquiera de los 8 cuadrantes del campus para examinar en detalle sus métricas de calor, victimización, déficit de iluminación y recomendaciones operativas.
+          </p>
+          <div class="badge badge-blue">
+            <i class="fa-solid fa-circle-info"></i> Capa vectorial interactiva
+          </div>
+        </div>
+
+        <!-- Populated Diagnostic Card (Hidden by default, shown on quadrant click) -->
+        <div id="diagnostic-card" class="card hidden">
+          <div class="flex-between items-center mb-md pb-sm" style="border-bottom: 1px solid var(--border-subtle);">
+            <div>
+              <span class="badge badge-purple" id="diag-zone-id">C1</span>
+              <h3 class="card-title mt-xs" id="diag-zone-name">Zona Rectorado</h3>
+            </div>
+            <button id="btn-close-diagnostic" class="btn btn-ghost btn-sm" aria-label="Cerrar ficha diagnóstica" title="Cerrar">
+              <i class="fa-solid fa-xmark" style="font-size: 1.1rem;"></i>
+            </button>
+          </div>
+
+          <!-- Heat Score Banner -->
+          <div class="flex-between items-center p-sm mb-md" style="background: var(--bg-secondary); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+            <div>
+              <div class="text-xs text-muted">ÍNDICE DE CALOR MULTIDIMENSIONAL</div>
+              <div class="flex items-center gap-sm mt-xs">
+                <span class="semaphore-dot red" id="diag-heat-dot"></span>
+                <span style="font-size: var(--font-size-2xl); font-weight: 800;" id="diag-heat-score">0.00</span>
+                <span class="text-xs text-muted">/ 1.00</span>
+              </div>
+            </div>
+            <span class="badge badge-red" id="diag-heat-badge">Alerta Crítica</span>
+          </div>
+
+          <!-- 4 Mini Stats Grid -->
+          <div class="diagnostic-stat-row">
+            <div class="mini-stat">
+              <div class="mini-stat-value text-primary" id="diag-reports">0</div>
+              <div class="mini-stat-label">Reportes Totales</div>
+            </div>
+            <div class="mini-stat">
+              <div class="mini-stat-value" id="diag-severity">0.0</div>
+              <div class="mini-stat-label">Severidad Promedio (1-5)</div>
+            </div>
+            <div class="mini-stat">
+              <div class="mini-stat-value" id="diag-victimization">0%</div>
+              <div class="mini-stat-label">Tasa Victimización</div>
+            </div>
+            <div class="mini-stat">
+              <div class="mini-stat-value" id="diag-lighting">0%</div>
+              <div class="mini-stat-label">Déficit Iluminación</div>
+            </div>
+          </div>
+
+          <!-- Top Risk Factors -->
+          <div class="mt-md">
+            <div class="text-xs font-semibold text-secondary mb-xs">
+              <i class="fa-solid fa-triangle-exclamation text-amber"></i> FACTORES DE RIESGO PREDOMINANTES:
+            </div>
+            <div id="diag-factors" class="flex flex-wrap gap-xs">
+              <span class="risk-badge">Iluminación deficiente</span>
+              <span class="risk-badge">Ausencia de vigilancia</span>
+            </div>
+          </div>
+
+          <!-- Operational Recommendation -->
+          <div class="recommendation-box">
+            <div class="font-semibold text-primary mb-xs" style="display:flex; align-items:center; gap:4px;">
+              <i class="fa-solid fa-bullhorn text-accent-blue"></i>
+              <span>Recomendación Operativa Inmediata:</span>
+            </div>
+            <p id="diag-recommendation" style="margin: 0;">
+              Cargando recomendación táctica...
+            </p>
+          </div>
+        </div>
+
+      </aside>
+    </div>
+
+    <!-- Bottom Section — Summary Stats -->
+    <div class="mt-2xl">
+      <div class="flex items-center gap-sm mb-lg">
+        <i class="fa-solid fa-chart-simple text-primary"></i>
+        <h3 class="card-title" style="margin: 0;">Métricas Consolidadas de la Sede Caracas</h3>
+      </div>
+      
+      <div class="grid-4 stagger">
+        <!-- Stat 1: Total Reports -->
+        <div class="card stat-card">
+          <div class="card-icon blue mx-auto mb-sm" style="margin: 0 auto var(--space-sm);">
+            <i class="fa-solid fa-database"></i>
+          </div>
+          <div class="stat-value" id="summary-total-reports">--</div>
+          <div class="stat-label">Total de Reportes Geoespaciales</div>
+        </div>
+
+        <!-- Stat 2: Avg Heat Index -->
+        <div class="card stat-card">
+          <div class="card-icon purple mx-auto mb-sm" style="margin: 0 auto var(--space-sm);">
+            <i class="fa-solid fa-fire-flame-curved"></i>
+          </div>
+          <div class="stat-value" id="summary-avg-heat">--</div>
+          <div class="stat-label">Índice Térmico Promedio (0-1)</div>
+        </div>
+
+        <!-- Stat 3: Highest Risk Zone -->
+        <div class="card stat-card">
+          <div class="card-icon red mx-auto mb-sm" style="margin: 0 auto var(--space-sm);">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <div class="stat-value" id="summary-highest-risk" style="background: linear-gradient(135deg, #f87171, #ef4444); -webkit-background-clip: text; background-clip: text;">--</div>
+          <div class="stat-label">Zona de Mayor Vulnerabilidad</div>
+        </div>
+
+        <!-- Stat 4: Security Perception -->
+        <div class="card stat-card">
+          <div class="card-icon cyan mx-auto mb-sm" style="margin: 0 auto var(--space-sm);">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div class="stat-value" id="summary-security-perception">--</div>
+          <div class="stat-label">Percepción Promedio de Seguridad (1-10)</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container" role="status" aria-live="polite"></div>
+
+  <!-- GIS Logic Script -->
+  <script src="/js/cartografia.js"></script>
+</body>
+</html>

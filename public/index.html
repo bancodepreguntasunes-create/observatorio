@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Observatorio de Paz — Diagnóstico de Convivencia</title>
+  <meta name="description" content="Instrumento oficial de diagnóstico de convivencia, paz y percepción de seguridad del Observatorio de Paz y Convivencia Democrática Universitaria.">
+  
+  <!-- FontAwesome 6 CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <!-- Global Design System CSS -->
+  <link rel="stylesheet" href="/css/styles.css">
+
+  <style>
+    /* Custom enhancements for interactive elements */
+    .campus-map .quadrant.selected {
+      fill: rgba(6, 182, 212, 0.3) !important;
+      stroke: var(--accent-cyan) !important;
+      stroke-width: 3.5px !important;
+      filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.5));
+    }
+    .quadrant-code {
+      pointer-events: none;
+      font-family: var(--font-family);
+      font-weight: 800;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.7);
+    }
+    .quadrant-sublabel {
+      pointer-events: none;
+      font-family: var(--font-family);
+      font-weight: 500;
+      font-size: 10px;
+      fill: var(--text-muted);
+      text-anchor: middle;
+    }
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-xs);
+      color: var(--accent-blue-light);
+      font-weight: 600;
+      margin-bottom: var(--space-sm);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand">
+        <span class="brand-icon">🕊️</span>
+        <span>Observatorio de Paz</span>
+      </a>
+      <ul class="navbar-links">
+        <li><a href="/" class="active"><i class="fa-solid fa-clipboard-check"></i> Diagnóstico</a></li>
+        <li><a href="/cartografia"><i class="fa-solid fa-map-location-dot"></i> Cartografía GIS</a></li>
+        <li><a href="/admin"><i class="fa-solid fa-chart-line"></i> Panel Admin</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero container animate-in">
+    <div class="step-badge">
+      <i class="fa-solid fa-shield-heart"></i> Instrumento Confidencial y Anónimo
+    </div>
+    <h1>Instrumento de Diagnóstico de Convivencia</h1>
+    <p>
+      Ecosistema institucional para diagnosticar, espacializar y transformar la convivencia,
+      el pluralismo democrático y la seguridad integral en nuestra comunidad universitaria.
+    </p>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="container-narrow mb-3xl">
+
+    <!-- Stepper Navigation -->
+    <div class="stepper animate-in" id="survey-stepper">
+      <div class="stepper-step active" data-step="0">
+        <span class="step-number">0</span>
+        <span>Consentimiento</span>
+      </div>
+      <div class="stepper-divider"></div>
+      <div class="stepper-step" data-step="1">
+        <span class="step-number">1</span>
+        <span>Perfil</span>
+      </div>
+      <div class="stepper-divider"></div>
+      <div class="stepper-step" data-step="2">
+        <span class="step-number">2</span>
+        <span>Convivencia</span>
+      </div>
+      <div class="stepper-divider"></div>
+      <div class="stepper-step" data-step="3">
+        <span class="step-number">3</span>
+        <span>Pluralismo</span>
+      </div>
+      <div class="stepper-divider"></div>
+      <div class="stepper-step" data-step="4">
+        <span class="step-number">4</span>
+        <span>Seguridad</span>
+      </div>
+      <div class="stepper-divider"></div>
+      <div class="stepper-step" data-step="5">
+        <span class="step-number">5</span>
+        <span>Propuestas</span>
+      </div>
+    </div>
+
+    <!-- Survey Form Container Card -->
+    <form id="survey-form" onsubmit="event.preventDefault();">
+
+      <!-- ========================================================
+           SECCIÓN 0: CONSENTIMIENTO INFORMADO
+           ======================================================== -->
+      <section class="form-section active card animate-in" id="section-0" data-section-index="0">
+        <div class="card-header">
+          <div class="card-icon blue">
+            <i class="fa-solid fa-file-contract"></i>
+          </div>
+          <div>
+            <h2 class="card-title">Consentimiento Informado Institucional</h2>
+            <p class="card-subtitle">Protocolo de ética de investigación y confidencialidad de la información</p>
+          </div>
+        </div>
+
+        <div class="alert alert-info">
+          <i class="fa-solid fa-lock" style="font-size: 1.25rem;"></i>
+          <div>
+            <strong>Garantía Estricta de Anonimato:</strong> Este instrumento no recopila nombres, correos electrónicos ni almacena direcciones IP. Toda la información es tratada bajo agregación estadística.
+          </div>
+        </div>
+
+        <div class="consent-box">
+          <h4 style="margin-bottom: 0.5rem; color: var(--text-primary); font-size: 1rem;">
+            Protocolo de Participación Libre, Confidencial e Informada
+          </h4>
+          <p class="mb-sm">
+            <strong>1. Propósito Institucional:</strong> El Observatorio de Paz y Convivencia Democrática Universitaria es una iniciativa técnico-académica diseñada para recopilar evidencia empírica rigurosa sobre el clima institucional, la vivencia de los derechos humanos, la tolerancia al disenso y la percepción de seguridad física y ambiental en la sede universitaria.
+          </p>
+          <p class="mb-sm">
+            <strong>2. Cero Rastreo de Identidad:</strong> En cumplimiento con las normas éticas internacionales de investigación social y ciberseguridad, la plataforma opera bajo un modelo de desacoplamiento total. El sistema no almacena metadatos del dispositivo ni direcciones IP.
+          </p>
+          <p class="mb-sm">
+            <strong>3. Destino y Uso de los Resultados:</strong> Los hallazgos cuantitativos y cualitativos serán procesados por el Comité Directivo del Observatorio y servirán como base empírica para la formulación de políticas de bienestar, protocolos de resolución pacífica de controversias y priorización de inversión en iluminación y vigilancia ante el Consejo Universitario.
+          </p>
+          <p class="mb-sm">
+            <strong>4. Voluntariedad y Autonomía:</strong> Su participación es enteramente voluntaria. Usted tiene el derecho inalienable de no responder preguntas específicas o de suspender y abandonar el cuestionario en cualquier momento sin necesidad de justificación y sin consecuencias académicas ni laborales de ninguna índole.
+          </p>
+        </div>
+
+        <div class="form-check" style="margin-top: 1.5rem; margin-bottom: 1.5rem; padding: 0.75rem 1rem; background: var(--bg-surface); border: 1px solid var(--border-default); border-radius: var(--radius-md);">
+          <input type="checkbox" id="consent_checkbox" name="consentimiento">
+          <label for="consent_checkbox" class="form-check-label font-semibold" style="color: var(--text-primary);">
+            He leído, comprendido y acepto participar voluntariamente en este diagnóstico institucional
+          </label>
+        </div>
+
+        <div class="flex-center mt-xl">
+          <button type="button" class="btn btn-primary btn-lg" id="btn-start" disabled onclick="nextSection()">
+            Comenzar Diagnóstico <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- ========================================================
+           SECCIÓN 1: PERFIL SOCIODEMOGRÁFICO
+           ======================================================== -->
+      <section class="form-section card" id="section-1" data-section-index="1">
+        <div class="card-header">
+          <div class="card-icon purple">
+            <i class="fa-solid fa-id-card-clip"></i>
+          </div>
+          <div>
+            <h2 class="card-title">Perfil Sociodemográfico</h2>
+            <p class="card-subtitle">Estratificación muestral y representatividad de los sectores de la comunidad</p>
+          </div>
+        </div>
+
+        <!-- Rol Universitario -->
+        <div class="form-group">
+          <label class="form-label">
+            1.1. Rol Universitario Principal <span class="required">*</span>
+          </label>
+          <div class="grid-2 gap-sm">
+            <label class="form-check">
+              <input type="radio" name="rol" value="Estudiante" id="rol_estudiante">
+              <span class="form-check-label"><i class="fa-solid fa-graduation-cap"></i> Estudiante</span>
+            </label>
+            <label class="form-check">
+              <input type="radio" name="rol" value="Docente" id="rol_docente">
+              <span class="form-check-label"><i class="fa-solid fa-chalkboard-user"></i> Docente</span>
+            </label>
+            <label class="form-check">
+              <input type="radio" name="rol" value="Administrativo" id="rol_administrativo">
+              <span class="form-check-label"><i class="fa-solid fa-briefcase"></i> Personal Administrativo</span>
+            </label>
+            <label class="form-check">
+              <input type="radio" name="rol" value="Obrero" id="rol_obrero">
+              <span class="form-check-label"><i class="fa-solid fa-screwdriver-wrench"></i> Personal Obrero / Mantenimiento</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Género -->
+        <div class="form-group">
+          <label class="form-label">
+            1.2. Identidad de Género <span class="required">*</span>
+          </label>
+          <div class="grid-2 gap-sm">
+            <label class="form-check">
+              <input type="radio" name="genero" value="Masculino" id="genero_masculino">
+              <span class="form-check-label">Masculino</span>
+            </label>
+            <label class="form-check">
+              <input type="radio" name="genero" value="Femenino" id="genero_femenino">
+              <span class="form-check-label">Femenino</span>
+            </label>
+            <label class="form-check">
+              <input type="radio" name="genero" value="No binario" id="genero_nobinario">
+              <span class="form-check-label">No binario</span>
+            </label>
+            <label class="form-check">
+              <input type="radio" name="genero" value="Prefiero no decir" id="genero_nodecir">
+              <span class="form-check-label">Prefiero no decir</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="grid-2 gap-md">
+          <!-- Rango de Edad -->
+          <div class="form-group">
+            <label class="form-label" for="edad">
+              1.3. Rango de Edad <span class="required">*</span>
+            </label>
+            <select class="form-select" id="edad" name="edad">
+              <option value="" disabled selected>Seleccione su rango...</option>
+              <option value="18-24">18 - 24 años</option>
+              <option value="25-34">25 - 34 años</option>
+              <option value="35-44">35 - 44 años</option>
+              <option value="45-54">45 - 54 años</option>
+              <option value="55+">55 años o más</option>
+            </select>
+          </div>
+
+          <!-- Facultad / Dependencia -->
+          <div class="form-group">
+            <label class="form-label" for="facultad">
+              1.4. Facultad o Dependencia <span class="required">*</span>
+            </label>
+            <select class="form-select" id="facultad" name="facultad">
+              <option value="" disabled selected>Seleccione facultad...</option>
+              <option value="Ingeniería">Ingeniería</option>
+              <option value="Derecho">Derecho</option>
+              <option value="Medicina">Medicina</option>
+              <option value="Ciencias Económicas">Ciencias Económicas y Sociales</option>
+              <option value="Humanidades">Humanidades y Educación</option>
+              <option value="Ciencias">Ciencias</option>
+              <option value="Arquitectura">Arquitectura y Urbanismo</option>
+              <option value="Odontología">Odontología</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Turno Habitual -->
+        <div class="form-group">
+          <label class="form-label">
+            1.5. Turno de Permanencia Habitual en Campus <span class="required">*</span>
+          </label>
+          <div class="grid-3 gap-sm">
+            <label class="form-check">
+              <input type="radio" name="turno" value="Diurno" id="turno_diurno">
+              <span class="form-check-label"><i class="fa-regular fa-sun"></i> Diurno</span>
+            </label>
+            <label class="form-check">
+              <input type="radio" name="turno" value="Nocturno" id="turno_nocturno">
+              <span class="form-check-label"><i class="fa-solid fa-moon"></i> Nocturno</span>
+            </label>
+            <label class="form-check">
+              <input type="radio" name="turno" value="Fines de semana" id="turno_finde">
+              <span class="form-check-label"><i class="fa-regular fa-calendar-days"></i> Fines de semana</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="flex-between mt-xl">
+          <button type="button" class="btn btn-secondary" onclick="prevSection()">
+            <i class="fa-solid fa-arrow-left"></i> Anterior
+          </button>
+          <button type="button" class="btn btn-primary" onclick="nextSection()">
+            Siguiente <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- ========================================================
+           SECCIÓN 2: PAZ Y CONVIVENCIA
+           ======================================================== -->
+      <section class="form-section card" id="section-2" data-section-index="2">
+        <div class="card-header">
+          <div class="card-icon green">
+            <i class="fa-solid fa-handshake-angle"></i>
+          </div>
+          <div>
+            <h2 class="card-title">Dimensión de Paz y Convivencia</h2>
+            <p class="card-subtitle">Frecuencia de interacciones, resolución dialogada y preservación de espacios</p>
+          </div>
+        </div>
+
+        <!-- 2.1 Conflictos verbales -->
+        <div class="form-group">
+          <label class="form-label">
+            2.1. ¿Con qué frecuencia presencia o experimenta conflictos verbales (insultos, descalificaciones, gritos)? <span class="required">*</span>
+          </label>
+          <div class="likert-group">
+            <div class="likert-option">
+              <input type="radio" id="cv_1" name="conflictos_verbales" value="1">
+              <label for="cv_1">1</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="cv_2" name="conflictos_verbales" value="2">
+              <label for="cv_2">2</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="cv_3" name="conflictos_verbales" value="3">
+              <label for="cv_3">3</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="cv_4" name="conflictos_verbales" value="4">
+              <label for="cv_4">4</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="cv_5" name="conflictos_verbales" value="5">
+              <label for="cv_5">5</label>
+            </div>
+          </div>
+          <div class="likert-labels">
+            <span>1 — Nunca</span>
+            <span>3 — Ocasionalmente</span>
+            <span>5 — Siempre / Muy Frecuente</span>
+          </div>
+        </div>
+
+        <!-- 2.2 Agresiones físicas -->
+        <div class="form-group">
+          <label class="form-label">
+            2.2. ¿Con qué frecuencia ha presenciado o tenido conocimiento de agresiones físicas dentro del campus? <span class="required">*</span>
+          </label>
+          <div class="likert-group">
+            <div class="likert-option">
+              <input type="radio" id="af_1" name="agresiones_fisicas" value="1">
+              <label for="af_1">1</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="af_2" name="agresiones_fisicas" value="2">
+              <label for="af_2">2</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="af_3" name="agresiones_fisicas" value="3">
+              <label for="af_3">3</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="af_4" name="agresiones_fisicas" value="4">
+              <label for="af_4">4</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="af_5" name="agresiones_fisicas" value="5">
+              <label for="af_5">5</label>
+            </div>
+          </div>
+          <div class="likert-labels">
+            <span>1 — Nunca</span>
+            <span>3 — Raras veces</span>
+            <span>5 — Frecuentemente</span>
+          </div>
+        </div>
+
+        <!-- 2.3 Respeto de espacios comunes (Inverted) -->
+        <div class="form-group">
+          <label class="form-label">
+            2.3. ¿Considera que los miembros de la comunidad cuidan y respetan los espacios y bienes comunes? <span class="required">*</span>
+          </label>
+          <div class="likert-group">
+            <div class="likert-option">
+              <input type="radio" id="re_1" name="respeto_espacios" value="1">
+              <label for="re_1">1</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="re_2" name="respeto_espacios" value="2">
+              <label for="re_2">2</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="re_3" name="respeto_espacios" value="3">
+              <label for="re_3">3</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="re_4" name="respeto_espacios" value="4">
+              <label for="re_4">4</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="re_5" name="respeto_espacios" value="5">
+              <label for="re_5">5</label>
+            </div>
+          </div>
+          <div class="likert-labels">
+            <span>1 — Nunca se respetan</span>
+            <span>3 — A veces</span>
+            <span>5 — Siempre se respetan</span>
+          </div>
+        </div>
+
+        <!-- 2.4 Trato cordial (Inverted) -->
+        <div class="form-group">
+          <label class="form-label">
+            2.4. ¿El trato general entre estudiantes, profesores y trabajadores es empático y cordial? <span class="required">*</span>
+          </label>
+          <div class="likert-group">
+            <div class="likert-option">
+              <input type="radio" id="tc_1" name="trato_cordial" value="1">
+              <label for="tc_1">1</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="tc_2" name="trato_cordial" value="2">
+              <label for="tc_2">2</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="tc_3" name="trato_cordial" value="3">
+              <label for="tc_3">3</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="tc_4" name="trato_cordial" value="4">
+              <label for="tc_4">4</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="tc_5" name="trato_cordial" value="5">
+              <label for="tc_5">5</label>
+            </div>
+          </div>
+          <div class="likert-labels">
+            <span>1 — Totalmente descortés</span>
+            <span>3 — Moderado</span>
+            <span>5 — Muy cordial y respetuoso</span>
+          </div>
+        </div>
+
+        <!-- 2.5 Canales de diálogo (Inverted) -->
+        <div class="form-group">
+          <label class="form-label">
+            2.5. ¿Los canales institucionales de mediación y diálogo resultan efectivos cuando surgen discrepancias? <span class="required">*</span>
+          </label>
+          <div class="likert-group">
+            <div class="likert-option">
+              <input type="radio" id="cd_1" name="canales_dialogo" value="1">
+              <label for="cd_1">1</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="cd_2" name="canales_dialogo" value="2">
+              <label for="cd_2">2</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="cd_3" name="canales_dialogo" value="3">
+              <label for="cd_3">3</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="cd_4" name="canales_dialogo" value="4">
+              <label for="cd_4">4</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="cd_5" name="canales_dialogo" value="5">
+              <label for="cd_5">5</label>
+            </div>
+          </div>
+          <div class="likert-labels">
+            <span>1 — Totalmente inefectivos</span>
+            <span>3 — Medianamente efectivos</span>
+            <span>5 — Altamente efectivos</span>
+          </div>
+        </div>
+
+        <div class="flex-between mt-xl">
+          <button type="button" class="btn btn-secondary" onclick="prevSection()">
+            <i class="fa-solid fa-arrow-left"></i> Anterior
+          </button>
+          <button type="button" class="btn btn-primary" onclick="nextSection()">
+            Siguiente <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- ========================================================
+           SECCIÓN 3: TOLERANCIA Y PLURALISMO
+           ======================================================== -->
+      <section class="form-section card" id="section-3" data-section-index="3">
+        <div class="card-header">
+          <div class="card-icon cyan">
+            <i class="fa-solid fa-comments"></i>
+          </div>
+          <div>
+            <h2 class="card-title">Tolerancia y Pluralismo Ideológico</h2>
+            <p class="card-subtitle">Libertad de cátedra, debate democrático y respeto a la pluralidad de opiniones</p>
+          </div>
+        </div>
+
+        <!-- 3.1 Seguridad de opiniones -->
+        <div class="form-group">
+          <label class="form-label">
+            3.1. ¿Se siente libre y seguro/a expresando abiertamente sus opiniones políticas, académicas o ideológicas en el aula y pasillos? <span class="required">*</span>
+          </label>
+          <div class="likert-group">
+            <div class="likert-option">
+              <input type="radio" id="so_1" name="seguridad_opiniones" value="1">
+              <label for="so_1">1</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="so_2" name="seguridad_opiniones" value="2">
+              <label for="so_2">2</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="so_3" name="seguridad_opiniones" value="3">
+              <label for="so_3">3</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="so_4" name="seguridad_opiniones" value="4">
+              <label for="so_4">4</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="so_5" name="seguridad_opiniones" value="5">
+              <label for="so_5">5</label>
+            </div>
+          </div>
+          <div class="likert-labels">
+            <span>1 — Totalmente inseguro/a</span>
+            <span>3 — Neutral</span>
+            <span>5 — Plenamente seguro/a</span>
+          </div>
+        </div>
+
+        <!-- 3.2 Discriminación ideológica -->
+        <div class="form-group">
+          <label class="form-label">
+            3.2. ¿Ha presenciado o sido objeto de discriminación, exclusión o burlas debido a su postura ideológica o pensamiento crítico? <span class="required">*</span>
+          </label>
+          <div class="likert-group">
+            <div class="likert-option">
+              <input type="radio" id="di_1" name="discriminacion_ideologica" value="1">
+              <label for="di_1">1</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="di_2" name="discriminacion_ideologica" value="2">
+              <label for="di_2">2</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="di_3" name="discriminacion_ideologica" value="3">
+              <label for="di_3">3</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="di_4" name="discriminacion_ideologica" value="4">
+              <label for="di_4">4</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="di_5" name="discriminacion_ideologica" value="5">
+              <label for="di_5">5</label>
+            </div>
+          </div>
+          <div class="likert-labels">
+            <span>1 — Nunca</span>
+            <span>3 — Ocasionalmente</span>
+            <span>5 — Frecuentemente</span>
+          </div>
+        </div>
+
+        <!-- 3.3 Clima en asambleas -->
+        <div class="form-group">
+          <label class="form-label">
+            3.3. ¿El clima reinante en asambleas estudiantiles, claustros o reuniones gremiales favorece la deliberación pacífica y tolerante? <span class="required">*</span>
+          </label>
+          <div class="likert-group">
+            <div class="likert-option">
+              <input type="radio" id="ca_1" name="clima_asambleas" value="1">
+              <label for="ca_1">1</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="ca_2" name="clima_asambleas" value="2">
+              <label for="ca_2">2</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="ca_3" name="clima_asambleas" value="3">
+              <label for="ca_3">3</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="ca_4" name="clima_asambleas" value="4">
+              <label for="ca_4">4</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="ca_5" name="clima_asambleas" value="5">
+              <label for="ca_5">5</label>
+            </div>
+          </div>
+          <div class="likert-labels">
+            <span>1 — Muy hostil e intolerante</span>
+            <span>3 — Regular</span>
+            <span>5 — Muy democrático y constructivo</span>
+          </div>
+        </div>
+
+        <!-- 3.4 Temor a represalias (CONDITIONAL: ONLY FOR STUDENTS) -->
+        <div class="form-group hidden" id="group-temor-represalias">
+          <div class="alert alert-info mb-sm">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <div><strong>Pregunta para Estudiantes:</strong> Evalúa la libertad de criterio evaluativo frente a posturas docentes o administrativas.</div>
+          </div>
+          <label class="form-label">
+            3.4. ¿Ha sentido temor de que expresar opiniones contrarias a las de sus docentes repercuta negativamente en sus calificaciones? <span class="required">*</span>
+          </label>
+          <div class="likert-group">
+            <div class="likert-option">
+              <input type="radio" id="tr_1" name="temor_represalias" value="1">
+              <label for="tr_1">1</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="tr_2" name="temor_represalias" value="2">
+              <label for="tr_2">2</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="tr_3" name="temor_represalias" value="3">
+              <label for="tr_3">3</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="tr_4" name="temor_represalias" value="4">
+              <label for="tr_4">4</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="tr_5" name="temor_represalias" value="5">
+              <label for="tr_5">5</label>
+            </div>
+          </div>
+          <div class="likert-labels">
+            <span>1 — Ningún temor</span>
+            <span>3 — Moderado temor</span>
+            <span>5 — Alto temor a represalias</span>
+          </div>
+        </div>
+
+        <div class="flex-between mt-xl">
+          <button type="button" class="btn btn-secondary" onclick="prevSection()">
+            <i class="fa-solid fa-arrow-left"></i> Anterior
+          </button>
+          <button type="button" class="btn btn-primary" onclick="nextSection()">
+            Siguiente <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- ========================================================
+           SECCIÓN 4: PERCEPCIÓN DE SEGURIDAD Y MAPA GEOESPACIAL
+           ======================================================== -->
+      <section class="form-section card" id="section-4" data-section-index="4">
+        <div class="card-header">
+          <div class="card-icon amber">
+            <i class="fa-solid fa-map-location-dot"></i>
+          </div>
+          <div>
+            <h2 class="card-title">Percepción de Seguridad e Identificación Espacial</h2>
+            <p class="card-subtitle">Evaluación de riesgos, victimización y mapeo táctico del campus</p>
+          </div>
+        </div>
+
+        <!-- 4.1 Percepción general de seguridad (Range slider 1-10) -->
+        <div class="form-group">
+          <div class="flex-between mb-sm">
+            <label class="form-label mb-0" for="percepcion_seguridad">
+              4.1. Percepción general de seguridad dentro del campus: <span class="required">*</span>
+            </label>
+            <span class="range-value" id="range-seguridad-value">5 / 10</span>
+          </div>
+          <input type="range" min="1" max="10" value="5" step="1" class="range-slider" id="percepcion_seguridad" name="percepcion_seguridad">
+          <div class="flex-between mt-sm text-xs text-muted">
+            <span><i class="fa-solid fa-triangle-exclamation text-danger"></i> 1 — Muy Inseguro</span>
+            <span>5 — Nivel Medio</span>
+            <span>10 — Muy Seguro <i class="fa-solid fa-shield text-success"></i></span>
+          </div>
+        </div>
+
+        <!-- 4.2 Victimización -->
+        <div class="form-group">
+          <label class="form-label">
+            4.2. ¿Ha sido víctima de algún delito o intento de agresión dentro del campus en el último año? <span class="required">*</span>
+          </label>
+          <div class="flex gap-xl">
+            <label class="form-check">
+              <input type="radio" name="victimizacion" value="1" id="victima_si">
+              <span class="form-check-label font-semibold"><i class="fa-solid fa-triangle-exclamation text-amber"></i> Sí, he sido víctima</span>
+            </label>
+            <label class="form-check">
+              <input type="radio" name="victimizacion" value="0" id="victima_no">
+              <span class="form-check-label font-semibold"><i class="fa-solid fa-circle-check text-green"></i> No</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 4.3 Iluminación nocturna -->
+        <div class="form-group">
+          <label class="form-label">
+            4.3. Calidad de la iluminación nocturna y visibilidad en áreas de tránsito: <span class="required">*</span>
+          </label>
+          <div class="likert-group">
+            <div class="likert-option">
+              <input type="radio" id="ilum_1" name="iluminacion_nocturna" value="1">
+              <label for="ilum_1">1</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="ilum_2" name="iluminacion_nocturna" value="2">
+              <label for="ilum_2">2</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="ilum_3" name="iluminacion_nocturna" value="3">
+              <label for="ilum_3">3</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="ilum_4" name="iluminacion_nocturna" value="4">
+              <label for="ilum_4">4</label>
+            </div>
+            <div class="likert-option">
+              <input type="radio" id="ilum_5" name="iluminacion_nocturna" value="5">
+              <label for="ilum_5">5</label>
+            </div>
+          </div>
+          <div class="likert-labels">
+            <span>1 — Muy deficiente / A oscuras</span>
+            <span>3 — Aceptable</span>
+            <span>5 — Excelente iluminación</span>
+          </div>
+        </div>
+
+        <!-- 4.4 Selector Geoespacial Interactivo -->
+        <div class="form-group mt-xl">
+          <div class="flex-between mb-sm flex-wrap gap-sm">
+            <div>
+              <label class="form-label mb-0">
+                4.4. Selector Geoespacial: Identifique las zonas de mayor vulnerabilidad o riesgo
+              </label>
+              <p class="form-hint">Haga clic sobre los cuadrantes del plano para marcar hasta 3 zonas críticas (opcional).</p>
+            </div>
+            <span class="badge badge-cyan" id="quadrant-badge">
+              <i class="fa-solid fa-location-crosshairs"></i> <span id="quadrant-count">0</span> / 3 seleccionadas
+            </span>
+          </div>
+
+          <!-- SVG Interactive Campus Map Container -->
+          <div class="campus-map-container mt-md">
+            <div class="campus-map">
+              <svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg" id="svg-campus-map" aria-label="Plano de Cuadrantes Universitarios">
+                <defs>
+                  <linearGradient id="grid-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#0f172a" stop-opacity="0.95" />
+                    <stop offset="100%" stop-color="#1e293b" stop-opacity="0.95" />
+                  </linearGradient>
+                </defs>
+
+                <!-- Base Canvas Perimeter -->
+                <rect x="8" y="8" width="584" height="384" rx="14" fill="url(#grid-bg)" stroke="rgba(148, 163, 184, 0.2)" stroke-width="1.5" stroke-dasharray="6 4" />
+
+                <!-- Boulevard Central Divider -->
+                <line x1="20" y1="200" x2="580" y2="200" stroke="rgba(59, 130, 246, 0.3)" stroke-width="2" stroke-dasharray="6 4" />
+                <text x="300" y="200" fill="rgba(148, 163, 184, 0.45)" font-family="Inter, sans-serif" font-size="10" font-weight="600" text-anchor="middle" dominant-baseline="central" letter-spacing="3">
+                  CORREDOR CENTRAL UNIVERSITARIO
+                </text>
+
+                <!-- NORTH COMPASS INDICATOR -->
+                <g transform="translate(560, 28)">
+                  <circle cx="0" cy="0" r="12" fill="rgba(30, 41, 59, 0.8)" stroke="rgba(148, 163, 184, 0.3)" />
+                  <path d="M 0 -8 L 4 0 L 0 2 L -4 0 Z" fill="#38bdf8" />
+                  <text x="0" y="8" fill="#94a3b8" font-size="8" font-weight="700" text-anchor="middle">N</text>
+                </g>
+
+                <!-- FILA 1 (Cuadrantes C1 a C4) -->
+                <!-- C1: Rectorado -->
+                <g class="quadrant-group" data-zone="C1">
+                  <rect class="quadrant" data-zone="C1" x="25" y="32" width="124" height="150" rx="10" fill="rgba(30, 41, 59, 0.9)" />
+                  <text x="87" y="70" class="quadrant-code" fill="var(--accent-blue-light)" font-size="18" text-anchor="middle">C1</text>
+                  <text x="87" y="102" class="quadrant-label">Rectorado</text>
+                  <text x="87" y="126" class="quadrant-sublabel">Gobierno Central</text>
+                </g>
+
+                <!-- C2: Ingeniería -->
+                <g class="quadrant-group" data-zone="C2">
+                  <rect class="quadrant" data-zone="C2" x="165" y="32" width="124" height="150" rx="10" fill="rgba(30, 41, 59, 0.9)" />
+                  <text x="227" y="70" class="quadrant-code" fill="var(--accent-blue-light)" font-size="18" text-anchor="middle">C2</text>
+                  <text x="227" y="102" class="quadrant-label">Ingeniería</text>
+                  <text x="227" y="126" class="quadrant-sublabel">Aulas y Laboratorios</text>
+                </g>
+
+                <!-- C3: Estacionamientos -->
+                <g class="quadrant-group" data-zone="C3">
+                  <rect class="quadrant" data-zone="C3" x="305" y="32" width="124" height="150" rx="10" fill="rgba(30, 41, 59, 0.9)" />
+                  <text x="367" y="70" class="quadrant-code" fill="var(--accent-blue-light)" font-size="18" text-anchor="middle">C3</text>
+                  <text x="367" y="102" class="quadrant-label">Estacionam.</text>
+                  <text x="367" y="126" class="quadrant-sublabel">Zona Perimetral</text>
+                </g>
+
+                <!-- C4: Biblioteca Central -->
+                <g class="quadrant-group" data-zone="C4">
+                  <rect class="quadrant" data-zone="C4" x="445" y="32" width="124" height="150" rx="10" fill="rgba(30, 41, 59, 0.9)" />
+                  <text x="507" y="70" class="quadrant-code" fill="var(--accent-blue-light)" font-size="18" text-anchor="middle">C4</text>
+                  <text x="507" y="102" class="quadrant-label">Biblioteca</text>
+                  <text x="507" y="126" class="quadrant-sublabel">Salas de Estudio</text>
+                </g>
+
+                <!-- FILA 2 (Cuadrantes C5 a C8) -->
+                <!-- C5: Comedor Universitario -->
+                <g class="quadrant-group" data-zone="C5">
+                  <rect class="quadrant" data-zone="C5" x="25" y="218" width="124" height="150" rx="10" fill="rgba(30, 41, 59, 0.9)" />
+                  <text x="87" y="256" class="quadrant-code" fill="var(--accent-blue-light)" font-size="18" text-anchor="middle">C5</text>
+                  <text x="87" y="288" class="quadrant-label">Comedor</text>
+                  <text x="87" y="312" class="quadrant-sublabel">Área de Servicios</text>
+                </g>
+
+                <!-- C6: Canchas Deportivas -->
+                <g class="quadrant-group" data-zone="C6">
+                  <rect class="quadrant" data-zone="C6" x="165" y="218" width="124" height="150" rx="10" fill="rgba(30, 41, 59, 0.9)" />
+                  <text x="227" y="256" class="quadrant-code" fill="var(--accent-blue-light)" font-size="18" text-anchor="middle">C6</text>
+                  <text x="227" y="288" class="quadrant-label">Canchas</text>
+                  <text x="227" y="312" class="quadrant-sublabel">Área Recreativa</text>
+                </g>
+
+                <!-- C7: Residencias -->
+                <g class="quadrant-group" data-zone="C7">
+                  <rect class="quadrant" data-zone="C7" x="305" y="218" width="124" height="150" rx="10" fill="rgba(30, 41, 59, 0.9)" />
+                  <text x="367" y="256" class="quadrant-code" fill="var(--accent-blue-light)" font-size="18" text-anchor="middle">C7</text>
+                  <text x="367" y="288" class="quadrant-label">Residencias</text>
+                  <text x="367" y="312" class="quadrant-sublabel">Alojamiento</text>
+                </g>
+
+                <!-- C8: Jardín Botánico -->
+                <g class="quadrant-group" data-zone="C8">
+                  <rect class="quadrant" data-zone="C8" x="445" y="218" width="124" height="150" rx="10" fill="rgba(30, 41, 59, 0.9)" />
+                  <text x="507" y="256" class="quadrant-code" fill="var(--accent-blue-light)" font-size="18" text-anchor="middle">C8</text>
+                  <text x="507" y="288" class="quadrant-label">Jardín Botánico</text>
+                  <text x="507" y="312" class="quadrant-sublabel">Áreas Verdes y Senderos</text>
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Matriz de Factores de Riesgo -->
+          <div class="mt-lg">
+            <label class="form-label">
+              4.5. Principales Factores de Riesgo o Vulnerabilidad Observados:
+            </label>
+            <p class="form-hint mb-sm">Seleccione todos los factores de inseguridad que haya detectado en el campus.</p>
+            
+            <div class="grid-2 gap-sm">
+              <label class="form-check">
+                <input type="checkbox" name="factores_riesgo" value="Iluminación deficiente">
+                <span class="form-check-label"><i class="fa-solid fa-lightbulb"></i> Iluminación deficiente</span>
+              </label>
+              <label class="form-check">
+                <input type="checkbox" name="factores_riesgo" value="Zonas aisladas">
+                <span class="form-check-label"><i class="fa-solid fa-person-shelter"></i> Zonas aisladas o de difícil acceso</span>
+              </label>
+              <label class="form-check">
+                <input type="checkbox" name="factores_riesgo" value="Accesos no vigilados">
+                <span class="form-check-label"><i class="fa-solid fa-door-open"></i> Accesos perimetrales no vigilados</span>
+              </label>
+              <label class="form-check">
+                <input type="checkbox" name="factores_riesgo" value="Aglomeraciones">
+                <span class="form-check-label"><i class="fa-solid fa-users"></i> Aglomeraciones sin control</span>
+              </label>
+              <label class="form-check">
+                <input type="checkbox" name="factores_riesgo" value="Infraestructura deteriorada">
+                <span class="form-check-label"><i class="fa-solid fa-triangle-exclamation"></i> Infraestructura o cerramientos deteriorados</span>
+              </label>
+              <label class="form-check">
+                <input type="checkbox" name="factores_riesgo" value="Falta de cámaras">
+                <span class="form-check-label"><i class="fa-solid fa-video-slash"></i> Falta de cámaras de videovigilancia</span>
+              </label>
+              <label class="form-check">
+                <input type="checkbox" name="factores_riesgo" value="Ausencia de vigilancia">
+                <span class="form-check-label"><i class="fa-solid fa-user-shield"></i> Ausencia de patrullaje o vigilancia interna</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex-between mt-xl">
+          <button type="button" class="btn btn-secondary" onclick="prevSection()">
+            <i class="fa-solid fa-arrow-left"></i> Anterior
+          </button>
+          <button type="button" class="btn btn-primary" onclick="nextSection()">
+            Siguiente <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- ========================================================
+           SECCIÓN 5: PROPUESTAS Y COMENTARIOS CUALITATIVOS
+           ======================================================== -->
+      <section class="form-section card" id="section-5" data-section-index="5">
+        <div class="card-header">
+          <div class="card-icon red">
+            <i class="fa-solid fa-lightbulb"></i>
+          </div>
+          <div>
+            <h2 class="card-title">Propuestas, Comentarios y Cierre</h2>
+            <p class="card-subtitle">Iniciativas de transformación institucional y sugerencias constructivas</p>
+          </div>
+        </div>
+
+        <!-- Proposals Textarea -->
+        <div class="form-group">
+          <label class="form-label" for="propuestas">
+            5.1. Propuestas Concretas o Comentarios para la Convivencia y Seguridad Universitaria:
+          </label>
+          <textarea class="form-textarea" id="propuestas" name="propuestas" rows="4" placeholder="Escriba aquí sus observaciones, propuestas sobre comités de paz, iluminación, protocolos o vivencias que considere relevante que el Consejo Universitario tome en cuenta..."></textarea>
+          <div class="form-hint">Este campo es completamente cualitativo y opcional. Su aporte nutrirá el informe del Comité Directivo.</div>
+        </div>
+
+        <!-- Modo Brigada de Voluntariado -->
+        <div class="card" style="background: rgba(17, 24, 39, 0.6); border: 1px solid var(--border-default); margin-bottom: var(--space-xl);">
+          <div class="flex-between">
+            <div style="padding-right: 1rem;">
+              <div class="flex" style="align-items: center; gap: 8px;">
+                <span class="font-bold" style="color: var(--text-primary);"><i class="fa-solid fa-users-viewfinder" style="color: var(--accent-blue-light);"></i> Modo Brigada de Voluntariado</span>
+                <span class="badge badge-blue">Recolección de Campo</span>
+              </div>
+              <p class="form-hint mt-xs">
+                Active este interruptor táctico si este formulario está siendo registrado por un brigadista voluntario en operativo de campo.
+              </p>
+            </div>
+            <label class="toggle-switch">
+              <input type="checkbox" id="modo_brigada" name="modo_brigada">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex-between mt-xl">
+          <button type="button" class="btn btn-secondary" onclick="prevSection()">
+            <i class="fa-solid fa-arrow-left"></i> Anterior
+          </button>
+          <button type="button" class="btn btn-primary btn-lg" id="btn-submit" onclick="submitSurvey()">
+            <i class="fa-solid fa-paper-plane"></i> Enviar Diagnóstico
+          </button>
+        </div>
+      </section>
+
+      <!-- ========================================================
+           CONFIRMACIÓN EXITOSA (Pantalla de Agradecimiento)
+           ======================================================== -->
+      <section class="form-section card text-center hidden" id="section-success">
+        <div style="padding: 2.5rem 1rem;">
+          <div style="width: 80px; height: 80px; margin: 0 auto var(--space-lg); border-radius: 50%; background: rgba(16, 185, 129, 0.15); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);">
+            <i class="fa-solid fa-check" style="font-size: 2.5rem; color: var(--color-success-light);"></i>
+          </div>
+          
+          <h2 style="font-size: var(--font-size-2xl); margin-bottom: var(--space-sm); color: var(--text-primary);">
+            ¡Diagnóstico Registrado con Éxito!
+          </h2>
+          
+          <p class="text-secondary" style="max-width: 520px; margin: 0 auto var(--space-xl); font-size: var(--font-size-base); line-height: 1.7;">
+            Su aporte ha sido procesado de manera anónima y agregada. Sus respuestas fortalecen el cálculo del 
+            <strong>Índice de Paz</strong> y la <strong>Cartografía de Convivencia</strong> universitaria.
+          </p>
+
+          <div class="flex-center gap-md flex-wrap">
+            <a href="/cartografia" class="btn btn-primary btn-lg">
+              <i class="fa-solid fa-map-location-dot"></i> Ver Cartografía GIS
+            </a>
+            <a href="/admin" class="btn btn-secondary btn-lg">
+              <i class="fa-solid fa-chart-pie"></i> Ver Estadísticas
+            </a>
+            <button type="button" class="btn btn-ghost" onclick="resetForm()">
+              <i class="fa-solid fa-rotate-right"></i> Llenar Otra Encuesta
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </form>
+  </main>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Survey Logic JS -->
+  <script src="/js/encuesta.js"></script>
+</body>
+</html>

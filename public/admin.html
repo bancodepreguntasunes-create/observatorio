@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Observatorio de Paz — Panel Administrativo</title>
+  <meta name="description" content="Tablero de Mando, Cuotas de Muestreo Estratificado y Auditoría Táctica del Observatorio de Paz">
+  
+  <!-- Google Fonts Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome 6 CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  
+  <!-- Design System CSS -->
+  <link rel="stylesheet" href="/css/styles.css">
+
+  <style>
+    /* Admin dashboard specific enhancements */
+    .chart-container-card {
+      position: relative;
+      height: 340px;
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+    }
+    .chart-wrapper {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      min-height: 240px;
+    }
+    .audit-action-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--space-md);
+      margin-top: var(--space-md);
+    }
+    .audit-log-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      font-family: monospace;
+      font-size: var(--font-size-xs);
+      color: var(--accent-cyan-light);
+      margin-top: var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .macro-stat-card {
+      padding: var(--space-xl) var(--space-lg);
+      text-align: center;
+      transition: transform var(--transition-base), border-color var(--transition-base);
+    }
+    .macro-stat-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent-blue);
+    }
+    .quota-card-wrapper {
+      transition: transform var(--transition-base);
+    }
+    .quota-card-wrapper:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="/" class="navbar-brand">
+        <div class="brand-icon">🕊️</div>
+        <span>Observatorio de Paz</span>
+      </a>
+      <nav>
+        <ul class="navbar-links">
+          <li><a href="/"><i class="fa-solid fa-clipboard-list"></i> Formulario</a></li>
+          <li><a href="/cartografia"><i class="fa-solid fa-map-location-dot"></i> Cartografía</a></li>
+          <li><a href="/admin" class="active"><i class="fa-solid fa-chart-line"></i> Panel Admin</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Header -->
+  <section class="hero">
+    <div class="container">
+      <div class="badge badge-purple mb-sm animate-in">
+        <i class="fa-solid fa-shield-halved"></i> Control Estratégico y Gobernanza
+      </div>
+      <h1 class="animate-in">Panel de Control — Comité Directivo</h1>
+      <p class="animate-in">Tablero de Mando, Auditoría Alfa y Seguimiento de Cuotas Representativas de Muestreo (Sede Piloto Caracas).</p>
+    </div>
+  </section>
+
+  <!-- Main Dashboard Content -->
+  <main class="container mb-3xl">
+
+    <!-- ── SECTION 1: Cuotas de Muestreo Estratificado ── -->
+    <section class="mb-2xl">
+      <div class="flex-between items-center mb-lg flex-wrap gap-sm">
+        <div>
+          <h2 style="font-size: var(--font-size-2xl); display: flex; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-bullseye text-primary"></i>
+            <span>Cuotas de Muestreo Estratificado (N=500)</span>
+          </h2>
+          <p class="text-secondary text-sm">Monitoreo de representatividad estadística para validez muestral y heterogeneidad.</p>
+        </div>
+        <div class="flex items-center gap-sm">
+          <button id="btn-refresh-stats" class="btn btn-secondary btn-sm" title="Refrescar estadísticas">
+            <i class="fa-solid fa-rotate"></i> Actualizar Datos
+          </button>
+        </div>
+      </div>
+
+      <!-- 6 Quota Cards Grid -->
+      <div class="grid-3 stagger">
+        
+        <!-- Quota 1: Estudiantes -->
+        <div class="quota-card quota-card-wrapper" id="card-quota-estudiantes">
+          <div class="quota-header">
+            <div class="flex items-center gap-sm">
+              <div class="card-icon blue" style="width: 32px; height: 32px; font-size: 0.9rem;">
+                <i class="fa-solid fa-graduation-cap"></i>
+              </div>
+              <span class="quota-title">Estudiantes</span>
+            </div>
+            <div class="semaphore">
+              <span class="semaphore-dot green" id="sem-estudiantes"></span>
+              <span class="badge badge-green" id="badge-estudiantes">--%</span>
+            </div>
+          </div>
+          <div class="quota-numbers mb-sm">
+            <span class="quota-current" id="current-estudiantes">0</span>
+            <span class="quota-target">/ 400 meta (80%)</span>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar green" id="progress-estudiantes" style="width: 0%;"></div>
+          </div>
+          <div class="flex-between text-xs text-muted mt-xs">
+            <span>Mínimo representativo</span>
+            <span id="pct-estudiantes">0% alcanzado</span>
+          </div>
+        </div>
+
+        <!-- Quota 2: Docentes -->
+        <div class="quota-card quota-card-wrapper" id="card-quota-docentes">
+          <div class="quota-header">
+            <div class="flex items-center gap-sm">
+              <div class="card-icon purple" style="width: 32px; height: 32px; font-size: 0.9rem;">
+                <i class="fa-solid fa-chalkboard-user"></i>
+              </div>
+              <span class="quota-title">Personal Docente</span>
+            </div>
+            <div class="semaphore">
+              <span class="semaphore-dot green" id="sem-docentes"></span>
+              <span class="badge badge-green" id="badge-docentes">--%</span>
+            </div>
+          </div>
+          <div class="quota-numbers mb-sm">
+            <span class="quota-current" id="current-docentes">0</span>
+            <span class="quota-target">/ 50 meta (10%)</span>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar green" id="progress-docentes" style="width: 0%;"></div>
+          </div>
+          <div class="flex-between text-xs text-muted mt-xs">
+            <span>Cuerpo profesoral</span>
+            <span id="pct-docentes">0% alcanzado</span>
+          </div>
+        </div>
+
+        <!-- Quota 3: Administrativos -->
+        <div class="quota-card quota-card-wrapper" id="card-quota-admin">
+          <div class="quota-header">
+            <div class="flex items-center gap-sm">
+              <div class="card-icon cyan" style="width: 32px; height: 32px; font-size: 0.9rem;">
+                <i class="fa-solid fa-briefcase"></i>
+              </div>
+              <span class="quota-title">Personal Administrativo</span>
+            </div>
+            <div class="semaphore">
+              <span class="semaphore-dot green" id="sem-admin"></span>
+              <span class="badge badge-green" id="badge-admin">--%</span>
+            </div>
+          </div>
+          <div class="quota-numbers mb-sm">
+            <span class="quota-current" id="current-admin">0</span>
+            <span class="quota-target">/ 35 meta (7%)</span>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar green" id="progress-admin" style="width: 0%;"></div>
+          </div>
+          <div class="flex-between text-xs text-muted mt-xs">
+            <span>Gestión y soporte</span>
+            <span id="pct-admin">0% alcanzado</span>
+          </div>
+        </div>
+
+        <!-- Quota 4: Obreros -->
+        <div class="quota-card quota-card-wrapper" id="card-quota-obreros">
+          <div class="quota-header">
+            <div class="flex items-center gap-sm">
+              <div class="card-icon amber" style="width: 32px; height: 32px; font-size: 0.9rem;">
+                <i class="fa-solid fa-helmet-safety"></i>
+              </div>
+              <span class="quota-title">Personal Obrero</span>
+            </div>
+            <div class="semaphore">
+              <span class="semaphore-dot green" id="sem-obreros"></span>
+              <span class="badge badge-green" id="badge-obreros">--%</span>
+            </div>
+          </div>
+          <div class="quota-numbers mb-sm">
+            <span class="quota-current" id="current-obreros">0</span>
+            <span class="quota-target">/ 15 meta (3%)</span>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar green" id="progress-obreros" style="width: 0%;"></div>
+          </div>
+          <div class="flex-between text-xs text-muted mt-xs">
+            <span>Mantenimiento y servicios</span>
+            <span id="pct-obreros">0% alcanzado</span>
+          </div>
+        </div>
+
+        <!-- Quota 5: Turno Nocturno / Fin de Semana -->
+        <div class="quota-card quota-card-wrapper" id="card-quota-nocturno">
+          <div class="quota-header">
+            <div class="flex items-center gap-sm">
+              <div class="card-icon red" style="width: 32px; height: 32px; font-size: 0.9rem;">
+                <i class="fa-solid fa-moon"></i>
+              </div>
+              <span class="quota-title">Turno Nocturno / F. Semana</span>
+            </div>
+            <div class="semaphore">
+              <span class="semaphore-dot green" id="sem-nocturno"></span>
+              <span class="badge badge-green" id="badge-nocturno">--%</span>
+            </div>
+          </div>
+          <div class="quota-numbers mb-sm">
+            <span class="quota-current" id="current-nocturno">0</span>
+            <span class="quota-target">/ 160 meta (40% est.)</span>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar green" id="progress-nocturno" style="width: 0%;"></div>
+          </div>
+          <div class="flex-between text-xs text-muted mt-xs">
+            <span>Horarios de alta vulnerabilidad</span>
+            <span id="pct-nocturno">0% alcanzado</span>
+          </div>
+        </div>
+
+        <!-- Quota 6: Paridad de Género -->
+        <div class="quota-card quota-card-wrapper" id="card-quota-genero">
+          <div class="quota-header">
+            <div class="flex items-center gap-sm">
+              <div class="card-icon green" style="width: 32px; height: 32px; font-size: 0.9rem;">
+                <i class="fa-solid fa-scale-balanced"></i>
+              </div>
+              <span class="quota-title">Paridad de Género</span>
+            </div>
+            <div class="semaphore">
+              <span class="semaphore-dot green" id="sem-genero"></span>
+              <span class="badge badge-green" id="badge-genero">Equilibrado</span>
+            </div>
+          </div>
+          <div class="quota-numbers mb-sm">
+            <span class="quota-current" id="current-genero-ratio" style="font-size: 1.3rem;">M: 50% / F: 50%</span>
+          </div>
+          <div class="progress-bar-container" style="background: rgba(139, 92, 246, 0.3);">
+            <div class="progress-bar" id="progress-genero-male" style="width: 50%; background: var(--accent-blue);"></div>
+          </div>
+          <div class="flex-between text-xs text-muted mt-xs">
+            <span id="genero-detail-m"><i class="fa-solid fa-mars text-accent-blue"></i> M: 0</span>
+            <span id="genero-detail-f"><i class="fa-solid fa-venus text-accent-purple"></i> F: 0</span>
+            <span id="genero-detail-nb">Otros: 0</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── SECTION 2: Alertas Tácticas Automáticas para Brigadas ── -->
+    <section class="mb-2xl">
+      <div class="flex items-center gap-sm mb-md">
+        <i class="fa-solid fa-satellite-dish text-primary"></i>
+        <h3 class="card-title" style="margin: 0;">Alertas Tácticas y Misiones de Campo para Brigadas</h3>
+      </div>
+      
+      <div id="tactical-alerts-container">
+        <!-- Dynamically injected alerts (alert-danger, alert-warning, or alert-success) -->
+        <div class="alert alert-info animate-in">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+          <div>Evaluando estado de muestreo y calculando vector de balance estratificado...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 3: Macroindicadores Institucionales ── -->
+    <section class="mb-2xl">
+      <div class="flex items-center gap-sm mb-lg">
+        <i class="fa-solid fa-gauge-high text-primary"></i>
+        <h3 class="card-title" style="margin: 0;">Macroindicadores Institucionales de Convivencia</h3>
+      </div>
+
+      <div class="grid-4 stagger">
+        <!-- Indicator 1: Índice de Paz -->
+        <div class="card macro-stat-card">
+          <div class="card-icon green mx-auto mb-sm" style="margin: 0 auto var(--space-sm);">
+            <i class="fa-solid fa-dove"></i>
+          </div>
+          <div class="stat-value" id="ind-paz" style="background: linear-gradient(135deg, #10b981, #06b6d4); -webkit-background-clip: text; background-clip: text;">
+            --
+          </div>
+          <div class="stat-label">Índice de Paz Universitaria (0-100)</div>
+          <div class="text-xs text-muted mt-xs">Respeto, trato cordial y diálogo</div>
+        </div>
+
+        <!-- Indicator 2: Tolerancia Ideológica -->
+        <div class="card macro-stat-card">
+          <div class="card-icon purple mx-auto mb-sm" style="margin: 0 auto var(--space-sm);">
+            <i class="fa-solid fa-hands-holding-circle"></i>
+          </div>
+          <div class="stat-value" id="ind-tolerancia" style="background: linear-gradient(135deg, #a78bfa, #8b5cf6); -webkit-background-clip: text; background-clip: text;">
+            --
+          </div>
+          <div class="stat-label">Tolerancia y Pluralismo (0-100)</div>
+          <div class="text-xs text-muted mt-xs">Libertad de expresión y no represalias</div>
+        </div>
+
+        <!-- Indicator 3: Percepción de Seguridad -->
+        <div class="card macro-stat-card">
+          <div class="card-icon blue mx-auto mb-sm" style="margin: 0 auto var(--space-sm);">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div class="stat-value" id="ind-seguridad" style="background: linear-gradient(135deg, #60a5fa, #3b82f6); -webkit-background-clip: text; background-clip: text;">
+            --
+          </div>
+          <div class="stat-label">Percepción de Seguridad (1-10)</div>
+          <div class="text-xs text-muted mt-xs">Escala psicométrica subjetiva</div>
+        </div>
+
+        <!-- Indicator 4: Tasa de Victimización -->
+        <div class="card macro-stat-card">
+          <div class="card-icon red mx-auto mb-sm" style="margin: 0 auto var(--space-sm);">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <div class="stat-value" id="ind-victimizacion" style="background: linear-gradient(135deg, #fb7185, #ef4444); -webkit-background-clip: text; background-clip: text;">
+            --
+          </div>
+          <div class="stat-label">Tasa de Victimización (%)</div>
+          <div class="text-xs text-muted mt-xs">Incidencia delictiva declarada</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 4: Gráficos Dinámicos (Chart.js) ── -->
+    <section class="mb-2xl">
+      <div class="flex items-center gap-sm mb-lg">
+        <i class="fa-solid fa-chart-pie text-primary"></i>
+        <h3 class="card-title" style="margin: 0;">Visualización Analítica de la Población y Factores</h3>
+      </div>
+
+      <div class="grid-2">
+        <!-- Chart 1: Demographics Doughnut -->
+        <div class="card chart-container-card">
+          <div class="flex-between items-center mb-sm">
+            <h4 class="card-title" style="font-size: var(--font-size-base);">
+              <i class="fa-solid fa-users text-primary mr-xs"></i> Composición de la Muestra por Rol
+            </h4>
+            <span class="badge badge-blue">Demografía</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chart-roles"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 2: Top Risk Factors Horizontal Bar -->
+        <div class="card chart-container-card">
+          <div class="flex-between items-center mb-sm">
+            <h4 class="card-title" style="font-size: var(--font-size-base);">
+              <i class="fa-solid fa-ranking-star text-amber mr-xs"></i> Ranking de Factores de Riesgo
+            </h4>
+            <span class="badge badge-amber">Diagnóstico Espacial</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chart-factors"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 5: Exportación de Datos de Investigación ── -->
+    <section class="mb-2xl">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon cyan">
+            <i class="fa-solid fa-file-export"></i>
+          </div>
+          <div>
+            <h3 class="card-title">Exportación de Datos para Ciencia de Datos e Investigación</h3>
+            <p class="card-subtitle">Descarga del dataset anonimizado para procesamiento en SPSS, R, Python (Pandas) y PowerBI.</p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-md items-center">
+          <button id="btn-export-csv" class="btn btn-secondary">
+            <i class="fa-solid fa-file-csv text-accent-blue" style="font-size: 1.2rem;"></i>
+            <span>Descargar CSV (UTF-8 con BOM)</span>
+          </button>
+          
+          <button id="btn-export-json" class="btn btn-secondary">
+            <i class="fa-solid fa-file-code text-accent-purple" style="font-size: 1.2rem;"></i>
+            <span>Descargar JSON Estructurado</span>
+          </button>
+
+          <span class="text-xs text-muted ml-auto">
+            <i class="fa-solid fa-user-shield"></i> Protocolo de anonimización estricto activo
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION 6: Auditoría Alfa y Control de Base de Datos ── -->
+    <section>
+      <div class="card" style="border: 1px solid rgba(239, 68, 68, 0.35);">
+        <div class="card-header">
+          <div class="card-icon amber">
+            <i class="fa-solid fa-screwdriver-wrench"></i>
+          </div>
+          <div>
+            <h3 class="card-title">Auditoría Alfa y Operaciones de Servidor</h3>
+            <p class="card-subtitle">Herramientas de simulación, pruebas de estrés computacional y reinicio seguro para nuevo periodo académico.</p>
+          </div>
+        </div>
+
+        <div class="audit-action-grid">
+          
+          <!-- Seed Button -->
+          <button id="btn-seed" class="btn btn-secondary">
+            <i class="fa-solid fa-database text-accent-blue"></i>
+            <span>Precargar Muestra Piloto (450)</span>
+          </button>
+
+          <!-- Stress Test Button -->
+          <button id="btn-stress-test" class="btn btn-warning">
+            <i class="fa-solid fa-bolt"></i>
+            <span>Stress Test (1000 registros)</span>
+          </button>
+
+          <!-- Reset Button -->
+          <button id="btn-reset" class="btn btn-danger">
+            <i class="fa-solid fa-trash-can"></i>
+            <span>Reiniciar Base de Datos</span>
+          </button>
+
+        </div>
+
+        <!-- Audit Status Output Box -->
+        <div class="audit-log-box" id="audit-status">
+          <i class="fa-solid fa-terminal"></i>
+          <span id="audit-status-text">Listo. Sistema en espera de operaciones de auditoría.</span>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── MODAL: Reset Confirmation ── -->
+  <div class="modal-backdrop" id="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <div class="flex items-center gap-md mb-md">
+        <div class="card-icon red" style="width: 44px; height: 44px;">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <div>
+          <h3 class="card-title" id="modal-title">¿Confirmar reinicio de la base de datos?</h3>
+          <p class="text-xs text-muted">Acción irreversible de auditoría</p>
+        </div>
+      </div>
+
+      <div class="alert alert-danger">
+        <i class="fa-solid fa-skull-crossbones"></i>
+        <div>
+          <strong>ADVERTENCIA:</strong> Esta acción eliminará permanentemente todas las encuestas y métricas registradas en la memoria del observatorio. Se reestablecerá una base de datos limpia.
+        </div>
+      </div>
+
+      <p class="text-sm text-secondary mb-xl">
+        ¿Está completamente seguro de continuar con el procedimiento de reinicio institucional?
+      </p>
+
+      <div class="flex justify-end gap-md" style="display: flex; justify-content: flex-end; gap: var(--space-md);">
+        <button id="modal-cancel-reset" class="btn btn-secondary">
+          <i class="fa-solid fa-xmark"></i> Cancelar
+        </button>
+        <button id="modal-confirm-reset" class="btn btn-danger">
+          <i class="fa-solid fa-trash-can"></i> Sí, Eliminar Todo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container" role="status" aria-live="polite"></div>
+
+  <!-- Admin Logic Script -->
+  <script src="/js/admin.js"></script>
+</body>
+</html>
