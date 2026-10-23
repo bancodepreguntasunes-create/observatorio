@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cartografía de Convivencia &bull; Mapa de Calor GIS</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/custom.css">
+  <link rel="stylesheet" href="/static/css/custom.css">
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
+
+  <!-- Encabezado -->
+  <header class="bg-slate-950 border-b border-slate-800 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md">
+          <i class="fa-solid fa-map-location-dot text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold tracking-tight">Cartografía de Convivencia &bull; GIS</h1>
+          <p class="text-xs text-blue-300 font-medium">Algoritmo de Nivel de Calor y Zonificación Geoespacial</p>
+        </div>
+      </div>
+
+      <nav class="flex items-center space-x-2 text-sm font-medium">
+        <a href="index.html" class="text-slate-300 hover:text-white px-3 py-1.5 rounded-lg hover:bg-slate-800 transition flex items-center space-x-1.5">
+          <i class="fa-solid fa-clipboard-list text-xs"></i>
+          <span>Encuesta</span>
+        </a>
+        <a href="cartografia.html" class="bg-blue-600/90 text-white px-3 py-1.5 rounded-lg flex items-center space-x-1.5 shadow-sm">
+          <i class="fa-solid fa-map-location-dot text-xs"></i>
+          <span>Cartografía GIS</span>
+        </a>
+        <a href="admin.html" class="text-slate-300 hover:text-white px-3 py-1.5 rounded-lg hover:bg-slate-800 transition flex items-center space-x-1.5">
+          <i class="fa-solid fa-chart-pie text-xs"></i>
+          <span>Comité Directivo</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Filtros Rápidos de Convivencia -->
+  <div class="bg-slate-950/80 border-b border-slate-800 backdrop-blur py-3 px-4">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 text-xs">
+      
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="text-slate-400 font-bold uppercase tracking-wider flex items-center">
+          <i class="fa-solid fa-filter mr-1.5 text-blue-400"></i> Filtros GIS:
+        </span>
+
+        <!-- Filtro Rol -->
+        <select id="filterRole" class="bg-slate-800 text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 focus:ring-1 focus:ring-blue-500">
+          <option value="all">Todos los Roles</option>
+          <option value="Estudiante">Estudiantes</option>
+          <option value="Docente">Docentes</option>
+          <option value="Personal Administrativo">Administrativos</option>
+          <option value="Personal Obrero">Obreros</option>
+        </select>
+
+        <!-- Filtro Tipo de Institución -->
+        <select id="filterInstitutionType" class="bg-slate-800 text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 focus:ring-1 focus:ring-blue-500">
+          <option value="all">Todos los Tipos de Institución</option>
+          <option value="Universidades Públicas Nacionales y Experimentales">Univ. Públicas y Experimentales</option>
+          <option value="Universidades Politécnicas Territoriales">Univ. Politécnicas Territoriales</option>
+          <option value="Universidades Privadas">Universidades Privadas</option>
+          <option value="Institutos Universitarios y Colegios Universitarios (Selección)">Institutos y Colegios Univ.</option>
+        </select>
+
+        <!-- Filtro Turno -->
+        <select id="filterShift" class="bg-slate-800 text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 focus:ring-1 focus:ring-blue-500">
+          <option value="all">Todos los Turnos</option>
+          <option value="Mañana">Turno Mañana</option>
+          <option value="Tarde">Turno Tarde</option>
+          <option value="Noche">Turno Noche</option>
+          <option value="Fines de semana">Fines de Semana</option>
+        </select>
+
+        <!-- Filtro Motivo -->
+        <select id="filterReason" class="bg-slate-800 text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 focus:ring-1 focus:ring-blue-500">
+          <option value="all">Todos los Motivos</option>
+          <option value="iluminación">Deficiencia de Iluminación</option>
+          <option value="ajenas">Presencia de Personas Ajenas</option>
+          <option value="patrullaje">Falta de Patrullaje / Seguridad</option>
+          <option value="hurtos">Historial de Hurtos / Robos</option>
+          <option value="roces">Roces o Conflictos Grupales</option>
+        </select>
+      </div>
+
+      <!-- Leyenda Térmica -->
+      <div class="flex items-center space-x-2 text-[11px] bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg">
+        <span class="text-slate-400 font-semibold mr-1">Escala de Calor:</span>
+        <span class="inline-flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-blue-500 mr-1"></span> Tranquilidad</span>
+        <span class="inline-flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mr-1"></span> Bajo</span>
+        <span class="inline-flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-yellow-400 mr-1"></span> Atención</span>
+        <span class="inline-flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-orange-500 mr-1"></span> Alto</span>
+        <span class="inline-flex items-center"><span class="w-2.5 h-2.5 rounded-full bg-red-500 mr-1"></span> Crítico</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Contenido Principal: Mapa + Panel de Diagnóstico -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Visor Cartográfico (Columna Izquierda / Central) -->
+    <div class="lg:col-span-8 flex flex-col space-y-4">
+      <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 shadow-2xl relative overflow-hidden flex-1 flex flex-col">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <h2 class="text-sm font-bold text-white flex items-center space-x-2">
+              <i class="fa-solid fa-layer-group text-blue-400"></i>
+              <span>Plano Georreferenciado del Campus Piloto (Caracas)</span>
+            </h2>
+            <p class="text-xs text-slate-400">Polígonos actualizados dinámicamente según la ponderación de reportes</p>
+          </div>
+          <div class="text-xs text-slate-400">
+            Encuestas analizadas: <span id="sampleCountDisplay" class="font-bold text-blue-400">0</span>
+          </div>
+        </div>
+
+        <!-- Lienzo SVG del Mapa de Calor -->
+        <div class="relative bg-[#070b19] rounded-xl border border-slate-800/80 p-2 flex-1 flex items-center justify-center min-h-[380px]">
+          <svg viewBox="0 0 800 450" class="w-full h-auto select-none rounded-lg" id="gisHeatMapSvg">
+            <!-- Capa base del terreno -->
+            <rect width="800" height="450" fill="#090e1f" />
+            <path d="M 50 225 L 750 225 M 400 30 L 400 420" stroke="#172554" stroke-width="26" stroke-linecap="round" />
+            <path d="M 50 225 L 750 225 M 400 30 L 400 420" stroke="#3b82f6" stroke-width="2" stroke-dasharray="8 6" opacity="0.4" />
+
+            <!-- Polígonos de cuadrantes que se colorean dinámicamente según Nivel de Calor -->
+            <polygon id="gis-poly-C1" points="430,40 760,40 760,200 430,200" fill="#2563eb" opacity="0.85" class="zone-polygon transition-all duration-500" data-id="C1" />
+            <text x="595" y="105" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" pointer-events="none">C1: Entrada / Estacionamiento Este</text>
+            <text id="label-score-C1" x="595" y="128" fill="#e2e8f0" font-size="11" font-weight="bold" text-anchor="middle" pointer-events="none">Calor: --</text>
+
+            <polygon id="gis-poly-C2" points="40,40 370,40 370,200 40,200" fill="#2563eb" opacity="0.85" class="zone-polygon transition-all duration-500" data-id="C2" />
+            <text x="205" y="105" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" pointer-events="none">C2: Pasillos Aulas Norte y Rectorado</text>
+            <text id="label-score-C2" x="205" y="128" fill="#e2e8f0" font-size="11" font-weight="bold" text-anchor="middle" pointer-events="none">Calor: --</text>
+
+            <polygon id="gis-poly-C3" points="220,160 580,160 580,290 220,290" fill="#2563eb" opacity="0.9" class="zone-polygon transition-all duration-500" data-id="C3" />
+            <text x="400" y="215" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle" pointer-events="none">C3: Biblioteca Central & Plaza Cubierta</text>
+            <text id="label-score-C3" x="400" y="238" fill="#e2e8f0" font-size="12" font-weight="bold" text-anchor="middle" pointer-events="none">Calor: --</text>
+
+            <polygon id="gis-poly-C4" points="40,240 200,240 200,340 40,340" fill="#2563eb" opacity="0.85" class="zone-polygon transition-all duration-500" data-id="C4" />
+            <text x="120" y="280" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle" pointer-events="none">C4: Comedor Central</text>
+            <text id="label-score-C4" x="120" y="300" fill="#e2e8f0" font-size="10" font-weight="bold" text-anchor="middle" pointer-events="none">Calor: --</text>
+
+            <polygon id="gis-poly-C5" points="40,355 200,355 200,425 40,425" fill="#2563eb" opacity="0.85" class="zone-polygon transition-all duration-500" data-id="C5" />
+            <text x="120" y="380" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle" pointer-events="none">C5: Ciencias / Labs</text>
+            <text id="label-score-C5" x="120" y="400" fill="#e2e8f0" font-size="10" font-weight="bold" text-anchor="middle" pointer-events="none">Calor: --</text>
+
+            <polygon id="gis-poly-C6" points="600,240 760,240 760,340 600,340" fill="#2563eb" opacity="0.85" class="zone-polygon transition-all duration-500" data-id="C6" />
+            <text x="680" y="280" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle" pointer-events="none">C6: Polideportivo</text>
+            <text id="label-score-C6" x="680" y="300" fill="#e2e8f0" font-size="10" font-weight="bold" text-anchor="middle" pointer-events="none">Calor: --</text>
+
+            <polygon id="gis-poly-C7" points="600,355 760,355 760,425 600,425" fill="#2563eb" opacity="0.85" class="zone-polygon transition-all duration-500" data-id="C7" />
+            <text x="680" y="380" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle" pointer-events="none">C7: Jardines Perímetro</text>
+            <text id="label-score-C7" x="680" y="400" fill="#e2e8f0" font-size="10" font-weight="bold" text-anchor="middle" pointer-events="none">Calor: --</text>
+
+            <polygon id="gis-poly-C8" points="220,310 580,310 580,425 220,425" fill="#2563eb" opacity="0.85" class="zone-polygon transition-all duration-500" data-id="C8" />
+            <text x="400" y="360" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" pointer-events="none">C8: Residencias Estudiantiles & Salud</text>
+            <text id="label-score-C8" x="400" y="382" fill="#e2e8f0" font-size="11" font-weight="bold" text-anchor="middle" pointer-events="none">Calor: --</text>
+          </svg>
+        </div>
+
+        <div class="text-[11px] text-slate-400 mt-2 flex items-center justify-between">
+          <span><i class="fa-solid fa-hand-pointer mr-1 text-blue-400"></i> Haz clic en cualquier cuadrante para inspeccionar detalles y factores de riesgo.</span>
+          <span>Modelo Matemático: Frecuencia (40%) + Severidad (25%) + Victimización (20%) + Luz (15%)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel de Diagnóstico e Información de Zona (Columna Derecha) -->
+    <div class="lg:col-span-4 flex flex-col space-y-4">
+      
+      <!-- Ficha de Zona Seleccionada -->
+      <div id="zoneDetailCard" class="bg-slate-950 border border-slate-800 rounded-2xl p-5 shadow-2xl flex-1 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-3">
+            <div>
+              <span id="detailZoneCode" class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-blue-900/60 text-blue-300 border border-blue-700/50">CUAD-01</span>
+              <h3 id="detailZoneName" class="text-base font-bold text-white mt-1">Puerta Principal y Estacionamiento Este</h3>
+            </div>
+            <div id="detailHeatBadge" class="text-right">
+              <span class="block text-2xl font-black text-red-500" id="detailHeatScore">85.4</span>
+              <span class="text-[10px] uppercase font-bold text-slate-400" id="detailHeatCategory">Alerta Crítica</span>
+            </div>
+          </div>
+
+          <p id="detailZoneDesc" class="text-xs text-slate-300 mb-4 leading-relaxed">
+            Punto de acceso perimetral, paradas de transporte público y estacionamiento este sin vigilancia continua.
+          </p>
+
+          <!-- Métricas del Cuadrante -->
+          <div class="grid grid-cols-2 gap-3 mb-4 text-xs">
+            <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+              <span class="text-slate-400 block text-[10px] uppercase">Menciones Críticas</span>
+              <span id="detailReportCount" class="text-sm font-bold text-white">48 reportes (24%)</span>
+            </div>
+            <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+              <span class="text-slate-400 block text-[10px] uppercase">Victimización Real</span>
+              <span id="detailVictimRatio" class="text-sm font-bold text-red-400">32.5%</span>
+            </div>
+            <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+              <span class="text-slate-400 block text-[10px] uppercase">Déficit Lumínico</span>
+              <span id="detailLightRatio" class="text-sm font-bold text-amber-400">68.0%</span>
+            </div>
+            <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+              <span class="text-slate-400 block text-[10px] uppercase">Tipo de Área</span>
+              <span id="detailAreaType" class="text-sm font-bold text-blue-300">Acceso / Tránsito</span>
+            </div>
+          </div>
+
+          <!-- Top Motivos Reportados -->
+          <div class="mb-4">
+            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Principales Factores Reportados:</h4>
+            <div id="detailReasonsList" class="space-y-1.5 text-xs">
+              <!-- Inyectado dinámicamente -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Recomendación Táctica Institucional -->
+        <div id="detailTacticalRecommendation" class="bg-blue-950/40 border border-blue-800/60 rounded-xl p-3 text-xs text-blue-200">
+          <div class="font-bold flex items-center space-x-1.5 text-blue-300 mb-1">
+            <i class="fa-solid fa-lightbulb"></i>
+            <span>Recomendación Inmediata</span>
+          </div>
+          <p id="detailTacticalText">
+            Priorizar patrullaje en horarios nocturnos (18:00 - 20:30) y sustitución urgente de reflectores perimetrales.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer class="bg-slate-950 text-slate-500 text-xs py-4 border-t border-slate-900 text-center">
+    Observatorio de Paz y Convivencia Democrática Universitaria &bull; Sistema de Cartografía Dinámica
+  </footer>
+
+  <script src="js/map.js"></script>
+  <script src="/static/js/map.js"></script>
+</body>
+</html>

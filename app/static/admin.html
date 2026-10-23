@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comité Directivo &bull; Tablero de Control Gerencial</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/custom.css">
+  <link rel="stylesheet" href="/static/css/custom.css">
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- Header Superior -->
+  <header class="gradient-header text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-bold shadow-md">
+          <i class="fa-solid fa-chart-line text-lg"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-base sm:text-lg font-bold tracking-tight">Comité Directivo del Observatorio</h1>
+            <span class="text-[10px] bg-amber-400 text-slate-900 font-extrabold px-2 py-0.5 rounded-full uppercase">Acceso Autoridad</span>
+          </div>
+          <p class="text-xs text-blue-200 font-medium">Dashboard de Cuotas, Métricas de Convivencia y Auditoría</p>
+        </div>
+      </div>
+
+      <nav class="flex items-center space-x-2 text-sm font-medium">
+        <a href="index.html" class="text-slate-300 hover:text-white px-3 py-1.5 rounded-lg hover:bg-slate-800 transition flex items-center space-x-1.5">
+          <i class="fa-solid fa-clipboard-list text-xs"></i>
+          <span>Encuesta</span>
+        </a>
+        <a href="cartografia.html" class="text-slate-300 hover:text-white px-3 py-1.5 rounded-lg hover:bg-slate-800 transition flex items-center space-x-1.5">
+          <i class="fa-solid fa-map-location-dot text-xs"></i>
+          <span>Cartografía GIS</span>
+        </a>
+        <a href="admin.html" class="bg-blue-600/90 text-white px-3 py-1.5 rounded-lg flex items-center space-x-1.5 shadow-sm">
+          <i class="fa-solid fa-chart-pie text-xs"></i>
+          <span>Comité Directivo</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Barra de Herramientas Rápidas -->
+  <div class="bg-white border-b border-slate-200 py-3">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3 text-xs">
+        <span class="font-bold text-slate-700">Periodo Activo:</span>
+        <span id="periodBadge" class="bg-slate-100 text-slate-800 px-3 py-1 rounded-full font-mono font-medium border border-slate-200">
+          Piloto Caracas 2026-I
+        </span>
+        <span id="surveyStatusBadge" class="px-2.5 py-0.5 rounded-full font-bold text-xs bg-emerald-100 text-emerald-800 border border-emerald-200">
+          ● Recolección Abierta
+        </span>
+      </div>
+
+      <!-- Botones de Acción y Exportación -->
+      <div class="flex items-center space-x-2 text-xs">
+        <a href="/api/export/csv" class="bg-slate-800 hover:bg-slate-900 text-white px-3 py-1.5 rounded-lg font-medium shadow-sm transition flex items-center space-x-1.5">
+          <i class="fa-solid fa-file-csv text-emerald-400"></i>
+          <span>Exportar CSV (Excel)</span>
+        </a>
+        <a href="/api/export/json" class="bg-slate-800 hover:bg-slate-900 text-white px-3 py-1.5 rounded-lg font-medium shadow-sm transition flex items-center space-x-1.5">
+          <i class="fa-solid fa-file-code text-blue-400"></i>
+          <span>Exportar JSON (Data Science)</span>
+        </a>
+        <button id="toggleSurveyStatusBtn" class="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 px-3 py-1.5 rounded-lg font-medium transition">
+          Alternar Estado
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor Principal -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-8">
+
+    <!-- 1. DASHBOARD DE CUOTAS (MUESTREO ALEATORIO ESTRATIFICADO CON CUOTAS) -->
+    <section class="glass-panel p-6 rounded-2xl shadow-sm border border-slate-200 bg-white">
+      <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="w-3 h-3 rounded-full bg-blue-600 animate-ping"></span>
+            <h2 class="text-lg font-extrabold text-slate-900">Dashboard de Control de Cuotas (Semáforo en Tiempo Real)</h2>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Garantía de Heterogeneidad Metodológica &bull; Nivel de confianza 95% &bull; Margen de error 5% (Meta Piloto: 500 encuestas)
+          </p>
+        </div>
+
+        <div id="sampleClosureAlert" class="px-3.5 py-1.5 rounded-xl text-xs font-bold border flex items-center space-x-2 bg-slate-100 text-slate-600 border-slate-300">
+          <i class="fa-solid fa-hourglass-half"></i>
+          <span>Muestreo en Proceso de Recolección</span>
+        </div>
+      </div>
+
+      <!-- Tarjetas de Semáforo de Cuotas -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 mb-6">
+        
+        <!-- Cuota 1: Estudiantes (80% / 400) -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-slate-600 uppercase tracking-wide">Estudiantes</span>
+              <span id="light-estudiantes" class="w-3.5 h-3.5 rounded-full bg-slate-300 shadow-sm"></span>
+            </div>
+            <div class="text-2xl font-black text-slate-900" id="actual-estudiantes">0</div>
+            <span class="text-[11px] text-slate-500">Meta: 400 (80%)</span>
+          </div>
+          <div class="mt-3">
+            <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+              <div id="bar-estudiantes" class="bg-blue-600 h-2 rounded-full" style="width: 0%"></div>
+            </div>
+            <span id="pct-estudiantes" class="text-[10px] font-bold text-slate-600 mt-1 block">0%</span>
+          </div>
+        </div>
+
+        <!-- Cuota 2: Docentes (10% / 50) -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-slate-600 uppercase tracking-wide">Docentes</span>
+              <span id="light-docentes" class="w-3.5 h-3.5 rounded-full bg-slate-300 shadow-sm"></span>
+            </div>
+            <div class="text-2xl font-black text-slate-900" id="actual-docentes">0</div>
+            <span class="text-[11px] text-slate-500">Meta: 50 (10%)</span>
+          </div>
+          <div class="mt-3">
+            <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+              <div id="bar-docentes" class="bg-blue-600 h-2 rounded-full" style="width: 0%"></div>
+            </div>
+            <span id="pct-docentes" class="text-[10px] font-bold text-slate-600 mt-1 block">0%</span>
+          </div>
+        </div>
+
+        <!-- Cuota 3: Administrativos (7% / 35) -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-slate-600 uppercase tracking-wide">Administrativos</span>
+              <span id="light-administrativos" class="w-3.5 h-3.5 rounded-full bg-slate-300 shadow-sm"></span>
+            </div>
+            <div class="text-2xl font-black text-slate-900" id="actual-administrativos">0</div>
+            <span class="text-[11px] text-slate-500">Meta: 35 (7%)</span>
+          </div>
+          <div class="mt-3">
+            <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+              <div id="bar-administrativos" class="bg-blue-600 h-2 rounded-full" style="width: 0%"></div>
+            </div>
+            <span id="pct-administrativos" class="text-[10px] font-bold text-slate-600 mt-1 block">0%</span>
+          </div>
+        </div>
+
+        <!-- Cuota 4: Obreros (3% / 15) -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-slate-600 uppercase tracking-wide">Obreros</span>
+              <span id="light-obreros" class="w-3.5 h-3.5 rounded-full bg-slate-300 shadow-sm"></span>
+            </div>
+            <div class="text-2xl font-black text-slate-900" id="actual-obreros">0</div>
+            <span class="text-[11px] text-slate-500">Meta: 15 (3%)</span>
+          </div>
+          <div class="mt-3">
+            <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+              <div id="bar-obreros" class="bg-blue-600 h-2 rounded-full" style="width: 0%"></div>
+            </div>
+            <span id="pct-obreros" class="text-[10px] font-bold text-slate-600 mt-1 block">0%</span>
+          </div>
+        </div>
+
+        <!-- Cuota 5: Turno Noche / Fin de Semana (40% de estudiantes / 160) -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-slate-600 uppercase tracking-wide">Turno Noche</span>
+              <span id="light-estudiantes_noche" class="w-3.5 h-3.5 rounded-full bg-slate-300 shadow-sm"></span>
+            </div>
+            <div class="text-2xl font-black text-slate-900" id="actual-estudiantes_noche">0</div>
+            <span class="text-[11px] text-slate-500">Meta: 160 (40%)</span>
+          </div>
+          <div class="mt-3">
+            <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+              <div id="bar-estudiantes_noche" class="bg-blue-600 h-2 rounded-full" style="width: 0%"></div>
+            </div>
+            <span id="pct-estudiantes_noche" class="text-[10px] font-bold text-slate-600 mt-1 block">0%</span>
+          </div>
+        </div>
+
+        <!-- Balance de Género -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-slate-600 uppercase tracking-wide">Paridad Género</span>
+              <i class="fa-solid fa-venus-mars text-xs text-blue-500"></i>
+            </div>
+            <div class="text-lg font-bold text-slate-900 mt-1" id="genderRatioDisplay">0% F / 0% M</div>
+            <span class="text-[11px] text-slate-500">Objetivo: ~50% / 50%</span>
+          </div>
+          <div class="mt-3 text-[10px] text-slate-500 font-medium">
+            Representación equitativa en muestra
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Alertas Tácticas para Brigadas de Voluntarios -->
+      <div id="tacticalAlertsContainer" class="space-y-2">
+        <!-- Inyectado dinámicamente -->
+      </div>
+    </section>
+
+    <!-- 2. MACROINDICADORES DE CONVIVENCIA Y SEGURIDAD -->
+    <section>
+      <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center space-x-2">
+        <i class="fa-solid fa-gauge-high text-blue-600"></i>
+        <span>Macroindicadores Institucionales (Línea Base Caracas)</span>
+      </h3>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <!-- KPI 1: Índice de Paz -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-slate-500 uppercase">Índice de Paz y Convivencia</span>
+            <span class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm font-bold">
+              <i class="fa-solid fa-dove"></i>
+            </span>
+          </div>
+          <div class="text-3xl font-extrabold text-blue-600" id="kpiPeaceIndex">0.0</div>
+          <p class="text-xs text-slate-500 mt-1">Escala 0 (violencia) a 100 (armonía)</p>
+        </div>
+
+        <!-- KPI 2: Tolerancia Ideológica -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-slate-500 uppercase">Libertad de Expresión</span>
+            <span class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm font-bold">
+              <i class="fa-solid fa-comments"></i>
+            </span>
+          </div>
+          <div class="text-3xl font-extrabold text-emerald-600" id="kpiToleranceIndex">0.0%</div>
+          <p class="text-xs text-slate-500 mt-1">Se sienten seguros de opinar libremente</p>
+        </div>
+
+        <!-- KPI 3: Percepción de Seguridad -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-slate-500 uppercase">Percepción de Seguridad</span>
+            <span class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-sm font-bold">
+              <i class="fa-solid fa-shield"></i>
+            </span>
+          </div>
+          <div class="text-3xl font-extrabold text-amber-600" id="kpiAvgSafety">0.0 / 10</div>
+          <p class="text-xs text-slate-500 mt-1">Promedio subjetivo en instalaciones</p>
+        </div>
+
+        <!-- KPI 4: Victimización -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold text-slate-500 uppercase">Tasa de Victimización</span>
+            <span class="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center text-sm font-bold">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </span>
+          </div>
+          <div class="text-3xl font-extrabold text-red-600" id="kpiVictimizationRate">0.0%</div>
+          <p class="text-xs text-slate-500 mt-1">Víctimas de hurto/delito en último año</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3. GRÁFICOS ANALÍTICOS Y DETALLE ESTADÍSTICO -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      <!-- Gráfico 1: Desglose por Rol -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+        <h4 class="text-sm font-bold text-slate-800 mb-4 flex items-center justify-between">
+          <span>Distribución de Respuestas por Rol Universitario</span>
+          <i class="fa-solid fa-chart-pie text-slate-400"></i>
+        </h4>
+        <div class="h-64 flex items-center justify-center">
+          <canvas id="rolesChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Gráfico 2: Factores de Inseguridad Reportados -->
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+        <h4 class="text-sm font-bold text-slate-800 mb-4 flex items-center justify-between">
+          <span>Motivos de Inseguridad más Señalados en el Campus</span>
+          <i class="fa-solid fa-chart-bar text-slate-400"></i>
+        </h4>
+        <div class="h-64 flex items-center justify-center">
+          <canvas id="reasonsChart"></canvas>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 4. PROPUESTAS CUALITATIVAS DE LA COMUNIDAD -->
+    <section class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="text-base font-bold text-slate-900">Propuestas Inmediatas de la Comunidad (Cualitativo)</h3>
+          <p class="text-xs text-slate-500">Insumo directo para las mesas de trabajo y formulación de políticas institucionales</p>
+        </div>
+        <i class="fa-solid fa-quote-left text-2xl text-slate-200"></i>
+      </div>
+
+      <div id="proposalsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-80 overflow-y-auto p-1">
+        <!-- Inyectado dinámicamente -->
+      </div>
+    </section>
+
+    <!-- 5. HERRAMIENTAS DE AUDITORÍA, PRUEBAS Y CONTROL DEL SISTEMA -->
+    <section class="glass-panel p-6 rounded-2xl shadow-sm border border-slate-200 bg-white">
+      <div class="flex items-center space-x-2 mb-4">
+        <i class="fa-solid fa-sliders text-blue-600"></i>
+        <h3 class="text-base font-bold text-slate-900">Auditoría, Simulación y Administración del Observatorio</h3>
+      </div>
+      <p class="text-xs text-slate-600 mb-6 max-w-3xl leading-relaxed">
+        Funcionalidades para la validación de software en <strong>Fase II (Paso 4: Pruebas Alfa y Auditoría de Seguridad)</strong>, carga de escenarios piloto representativos y mantenimiento semestral de la plataforma.
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <!-- Cargar Muestra Completa (500) -->
+        <button id="btnSeedComplete" class="p-4 rounded-xl border border-blue-200 bg-blue-50/70 hover:bg-blue-100/70 text-left transition flex flex-col justify-between">
+          <div>
+            <div class="text-blue-800 font-bold text-sm mb-1 flex items-center space-x-1.5">
+              <i class="fa-solid fa-database"></i>
+              <span>Cargar Muestra Completa</span>
+            </div>
+            <p class="text-xs text-slate-600 leading-snug">Genera 500 registros estratificados cumpliendo el 100% de cuotas (Semáforos Verdes).</p>
+          </div>
+          <span class="text-[11px] font-bold text-blue-700 mt-3 inline-block">Ejecutar Escenario &rarr;</span>
+        </button>
+
+        <!-- Cargar Muestra con Déficit -->
+        <button id="btnSeedDeficit" class="p-4 rounded-xl border border-amber-200 bg-amber-50/70 hover:bg-amber-100/70 text-left transition flex flex-col justify-between">
+          <div>
+            <div class="text-amber-800 font-bold text-sm mb-1 flex items-center space-x-1.5">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              <span>Cargar Muestra con Déficit</span>
+            </div>
+            <p class="text-xs text-slate-600 leading-snug">Simula avance parcial (340 registros) con déficit en obreros y noche para probar alertas de brigada.</p>
+          </div>
+          <span class="text-[11px] font-bold text-amber-700 mt-3 inline-block">Ejecutar Escenario &rarr;</span>
+        </button>
+
+        <!-- Pruebas de Carga Masiva (Stress Test) -->
+        <button id="btnStressTest" class="p-4 rounded-xl border border-purple-200 bg-purple-50/70 hover:bg-purple-100/70 text-left transition flex flex-col justify-between">
+          <div>
+            <div class="text-purple-800 font-bold text-sm mb-1 flex items-center space-x-1.5">
+              <i class="fa-solid fa-bolt"></i>
+              <span>Simulacro Masivo (Stress)</span>
+            </div>
+            <p class="text-xs text-slate-600 leading-snug">Auditoría de concurrencia: inyecta 500 encuestas masivas midiendo tiempo y rendimiento de servidor.</p>
+          </div>
+          <span class="text-[11px] font-bold text-purple-700 mt-3 inline-block">Iniciar Benchmark &rarr;</span>
+        </button>
+
+        <!-- Reinicio de Periodo -->
+        <button id="btnResetDb" class="p-4 rounded-xl border border-red-200 bg-red-50/70 hover:bg-red-100/70 text-left transition flex flex-col justify-between">
+          <div>
+            <div class="text-red-800 font-bold text-sm mb-1 flex items-center space-x-1.5">
+              <i class="fa-solid fa-rotate-right"></i>
+              <span>Reiniciar Base de Datos</span>
+            </div>
+            <p class="text-xs text-slate-600 leading-snug">Limpia las encuestas para abrir un nuevo periodo académico semestral.</p>
+          </div>
+          <span class="text-[11px] font-bold text-red-700 mt-3 inline-block">Reiniciar &rarr;</span>
+        </button>
+
+      </div>
+
+      <!-- Cuadro de Salida de Auditoría / Benchmark -->
+      <div id="benchmarkOutputCard" class="hidden mt-6 p-4 rounded-xl bg-slate-900 text-slate-200 font-mono text-xs border border-slate-800">
+        <div class="flex items-center justify-between text-slate-400 border-b border-slate-800 pb-2 mb-2 font-bold">
+          <span><i class="fa-solid fa-terminal mr-2"></i> Informe de Auditoría y Benchmark Alfa</span>
+          <span id="benchmarkTime">0.00s</span>
+        </div>
+        <pre id="benchmarkContent" class="overflow-x-auto whitespace-pre-wrap"></pre>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer class="bg-slate-900 text-slate-500 text-xs py-6 border-t border-slate-800 text-center">
+    Observatorio de Paz y Convivencia Democrática Universitaria &bull; Panel de Mando del Comité Directivo
+  </footer>
+
+  <script src="js/admin.js"></script>
+  <script src="/static/js/admin.js"></script>
+</body>
+</html>

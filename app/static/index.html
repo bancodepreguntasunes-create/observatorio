@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Observatorio de Paz y Convivencia Democrática Universitaria</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/custom.css">
+  <link rel="stylesheet" href="/static/css/custom.css">
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- Encabezado Institucional -->
+  <header class="gradient-header text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md">
+          <i class="fa-solid fa-scale-balanced text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold tracking-tight leading-snug">Observatorio de Paz y Convivencia</h1>
+          <p class="text-xs text-blue-200 font-medium">Universidad Piloto Caracas &bull; Censo Diagnóstico</p>
+        </div>
+      </div>
+
+      <nav class="flex items-center space-x-2 text-sm font-medium">
+        <a href="index.html" class="bg-blue-600/90 text-white px-3 py-1.5 rounded-lg flex items-center space-x-1.5 shadow-sm">
+          <i class="fa-solid fa-clipboard-list text-xs"></i>
+          <span>Encuesta</span>
+        </a>
+        <a href="cartografia.html" class="text-slate-300 hover:text-white px-3 py-1.5 rounded-lg hover:bg-slate-800 transition flex items-center space-x-1.5">
+          <i class="fa-solid fa-map-location-dot text-xs"></i>
+          <span>Cartografía GIS</span>
+        </a>
+        <a href="admin.html" class="text-slate-300 hover:text-white px-3 py-1.5 rounded-lg hover:bg-slate-800 transition flex items-center space-x-1.5">
+          <i class="fa-solid fa-chart-pie text-xs"></i>
+          <span>Comité Directivo</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Banner de Modo Campo & Barra de Progreso -->
+  <div class="bg-white border-b border-slate-200">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-3">
+      <div class="flex items-center space-x-2 text-xs text-slate-600">
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-semibold bg-emerald-100 text-emerald-800">
+          <i class="fa-solid fa-shield-halved mr-1.5"></i> 100% Anónimo
+        </span>
+        <span class="hidden sm:inline">&bull;</span>
+        <span class="hidden sm:inline"><i class="fa-regular fa-clock mr-1"></i> Tiempo: 5 a 7 minutos</span>
+      </div>
+
+      <div class="flex items-center space-x-3 text-xs">
+        <label for="fieldSurveyToggle" class="flex items-center cursor-pointer select-none font-medium text-slate-700">
+          <input type="checkbox" id="fieldSurveyToggle" class="sr-only peer">
+          <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+          <span class="ml-2">Modo Brigada de Voluntarios (Campo)</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor Principal del Formulario -->
+  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full">
+    
+    <!-- Hero / Presentación Ética -->
+    <div class="bg-gradient-to-r from-blue-900 to-indigo-900 text-white rounded-2xl p-6 sm:p-8 shadow-xl mb-8 relative overflow-hidden">
+      <div class="relative z-10 max-w-2xl">
+        <div class="inline-block px-3 py-1 bg-blue-500/30 border border-blue-400/40 rounded-full text-xs font-semibold uppercase tracking-wider text-blue-200 mb-3">
+          Instrumento de Recolección de Datos &bull; Diagnóstico Base
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight mb-2">
+          Hacia un Campus Universitario de Paz y Diálogo Democrático
+        </h2>
+        <p class="text-sm sm:text-base text-blue-100/90 leading-relaxed">
+          Tu participación es fundamental para espacializar áreas críticas, identificar fortalezas de convivencia y construir políticas académicas e institucionales fundamentadas en evidencia empírica.
+        </p>
+      </div>
+      <div class="absolute right-4 -bottom-10 opacity-15 pointer-events-none text-9xl text-white">
+        <i class="fa-solid fa-dove"></i>
+      </div>
+    </div>
+
+    <form id="observatorioSurveyForm" class="space-y-8">
+
+      <!-- SECCIÓN 0: Consentimiento Informado -->
+      <section class="glass-panel p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 bg-white">
+        <div class="flex items-start space-x-3 mb-4">
+          <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm shrink-0">
+            0
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-slate-900">Consentimiento Informado Institucional</h3>
+            <p class="text-xs text-slate-500">Requisito ético obligatorio para participar</p>
+          </div>
+        </div>
+
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs sm:text-sm text-slate-700 leading-relaxed mb-4">
+          <p class="mb-2">
+            El <strong>Observatorio de Paz y Convivencia Democrática Universitaria</strong> garantiza que sus respuestas son <strong>estrictamente confidenciales y anónimas</strong>. No se registra su dirección IP, correo electrónico, nombre ni ningún dato que permita identificarle.
+          </p>
+          <p>
+            Los datos recolectados serán utilizados exclusivamente con fines estadísticos, cartográficos de bienestar institucional y proyectos de investigación académica simbiótica.
+          </p>
+        </div>
+
+        <label class="flex items-center space-x-3 p-3 rounded-xl hover:bg-blue-50/50 cursor-pointer border border-transparent hover:border-blue-200 transition">
+          <input type="checkbox" id="consentCheckbox" required class="w-5 h-5 text-blue-600 rounded border-slate-300 focus:ring-blue-500">
+          <span class="text-sm font-semibold text-slate-800">
+            Acepto participar voluntariamente y de forma informada en este estudio institucional. <span class="text-red-500">*</span>
+          </span>
+        </label>
+      </section>
+
+      <!-- SECCIÓN 1: Perfilamiento Sociodemográfico -->
+      <section class="glass-panel p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 bg-white space-y-6">
+        <div class="flex items-start space-x-3 mb-2">
+          <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm shrink-0">
+            1
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-slate-900">Perfilamiento Sociodemográfico</h3>
+            <p class="text-xs text-slate-500">Variables de heterogeneidad para el control estratificado de la muestra</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- 1.1 Cédula de Identidad -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+              1.1 Cédula de Identidad <span class="text-red-500">*</span>
+            </label>
+            <div class="flex space-x-2">
+              <select id="userCedulaPrefix" class="w-24 bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2.5 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-blue-500 focus:bg-white">
+                <option value="V-">V -</option>
+                <option value="E-">E -</option>
+              </select>
+              <input type="text" id="userCedulaNumber" required pattern="[0-9]{5,9}" placeholder="Ej. 18452102" maxlength="9" class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-mono tracking-wider focus:ring-2 focus:ring-blue-500 focus:bg-white">
+            </div>
+            <span class="text-[10px] text-slate-400 mt-1 block">Ingrese únicamente números (de 5 a 9 dígitos).</span>
+          </div>
+
+          <!-- 1.2 Sexo -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+              1.2 Sexo <span class="text-red-500">*</span>
+            </label>
+            <select id="userGender" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold focus:ring-2 focus:ring-blue-500 focus:bg-white">
+              <option value="">Seleccione su sexo...</option>
+              <option value="Femenino">Femenino</option>
+              <option value="Masculino">Masculino</option>
+            </select>
+          </div>
+
+          <!-- 1.3 Rol Principal -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+              1.3 Rol Principal en la Universidad <span class="text-red-500">*</span>
+            </label>
+            <select id="userRole" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white">
+              <option value="">Seleccione su rol...</option>
+              <option value="Estudiante">Estudiante</option>
+              <option value="Docente">Docente / Investigador</option>
+              <option value="Personal Administrativo">Personal Administrativo</option>
+              <option value="Personal Obrero">Personal Obrero / Servicios Generales</option>
+              <option value="Personal Directivo/Autoridad">Personal Directivo / Autoridad</option>
+            </select>
+          </div>
+
+          <!-- 1.4 Rango de Edad -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+              1.4 Rango de Edad <span class="text-red-500">*</span>
+            </label>
+            <select id="userAge" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white">
+              <option value="">Seleccione rango...</option>
+              <option value="16-20">16 - 20 años</option>
+              <option value="21-25">21 - 25 años</option>
+              <option value="26-35">26 - 35 años</option>
+              <option value="36-50">36 - 50 años</option>
+              <option value="Más de 50">Más de 50 años</option>
+            </select>
+          </div>
+
+          <!-- 1.5 Turno -->
+          <div class="md:col-span-2">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+              1.5 Turno de Mayor Vida Universitaria <span class="text-red-500">*</span>
+            </label>
+            <select id="userShift" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white">
+              <option value="">Seleccione turno...</option>
+              <option value="Mañana">Mañana (07:00 - 12:00)</option>
+              <option value="Tarde">Tarde (12:00 - 17:00)</option>
+              <option value="Noche">Noche (17:00 - 21:00)</option>
+              <option value="Fines de semana">Fines de semana</option>
+              <option value="Mixto">Mixto / Rotativo</option>
+            </select>
+          </div>
+
+          <!-- 1.6 Tipo de Institución -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+              1.6 Tipo de Institución <span class="text-red-500">*</span>
+            </label>
+            <select id="userInstitutionType" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white">
+              <option value="">Seleccione tipo de institución...</option>
+              <option value="Universidades Públicas Nacionales y Experimentales">Universidades Públicas Nacionales y Experimentales</option>
+              <option value="Universidades Politécnicas Territoriales">Universidades Politécnicas Territoriales</option>
+              <option value="Universidades Privadas">Universidades Privadas</option>
+              <option value="Institutos Universitarios y Colegios Universitarios (Selección)">Institutos Universitarios y Colegios Universitarios (Selección)</option>
+            </select>
+          </div>
+
+          <!-- 1.7 Institución de Educación Superior -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+              1.7 Institución de Educación Superior <span class="text-red-500">*</span>
+            </label>
+            <select id="userInstitutionName" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white">
+              <option value="">Seleccione su institución universitaria...</option>
+              
+              <optgroup label="Universidades Públicas Nacionales y Experimentales" data-type="Universidades Públicas Nacionales y Experimentales">
+                <option value="Universidad Bolivariana de Venezuela (UBV)">Universidad Bolivariana de Venezuela (UBV)</option>
+                <option value="Universidad de los Pueblos del Sur (UNISUR)">Universidad de los Pueblos del Sur (UNISUR)</option>
+                <option value="Universidad Indígena de Venezuela (UIV)">Universidad Indígena de Venezuela (UIV)</option>
+                <option value="Universidad Militar Bolivariana de Venezuela (UMBV)">Universidad Militar Bolivariana de Venezuela (UMBV)</option>
+                <option value="Universidad Nacional Experimental de la Gran Caracas (UNEXCA)">Universidad Nacional Experimental de la Gran Caracas (UNEXCA)</option>
+                <option value="Universidad Nacional Experimental de la Seguridad (UNES)">Universidad Nacional Experimental de la Seguridad (UNES)</option>
+                <option value="Universidad Nacional Experimental de Guayana (UNEG)">Universidad Nacional Experimental de Guayana (UNEG)</option>
+                <option value="Universidad Nacional Experimental del Magisterio Samuel Robinson (UNEM)">Universidad Nacional Experimental del Magisterio Samuel Robinson (UNEM)</option>
+                <option value="Universidad Nacional Experimental del Táchira (UNET)">Universidad Nacional Experimental del Táchira (UNET)</option>
+                <option value="Universidad Nacional Experimental Francisco de Miranda (UNEFM)">Universidad Nacional Experimental Francisco de Miranda (UNEFM)</option>
+                <option value="Universidad Nacional Experimental de los Llanos Occidentales Ezequiel Zamora (UNELLEZ)">Universidad Nacional Experimental de los Llanos Occidentales Ezequiel Zamora (UNELLEZ)</option>
+                <option value="Universidad Nacional Experimental de las Artes (UNEARTE)">Universidad Nacional Experimental de las Artes (UNEARTE)</option>
+                <option value="Universidad Pedagógica Experimental Libertador (UPEL)">Universidad Pedagógica Experimental Libertador (UPEL)</option>
+                <option value="Universidad Nacional Experimental Politécnica Antonio José de Sucre (UNEXPO)">Universidad Nacional Experimental Politécnica Antonio José de Sucre (UNEXPO)</option>
+                <option value="Universidad Nacional Experimental Rafael María Baralt (UNERMB)">Universidad Nacional Experimental Rafael María Baralt (UNERMB)</option>
+                <option value="Universidad Nacional Experimental de los Llanos Centrales Rómulo Gallegos (UNERG)">Universidad Nacional Experimental de los Llanos Centrales Rómulo Gallegos (UNERG)</option>
+                <option value="Universidad Nacional Experimental Simón Rodríguez (UNESR)">Universidad Nacional Experimental Simón Rodríguez (UNESR)</option>
+                <option value="Universidad Nacional Experimental Politécnica de la Fuerza Armada Nacional (UNEFA)">Universidad Nacional Experimental Politécnica de la Fuerza Armada Nacional (UNEFA)</option>
+                <option value="Universidad de las Ciencias de la Salud Hugo Chávez Frías (UCS)">Universidad de las Ciencias de la Salud Hugo Chávez Frías (UCS)</option>
+                <option value="Universidad Deportiva del Sur (UDS)">Universidad Deportiva del Sur (UDS)</option>
+                <option value="Universidad Internacional de las Comunicaciones (LAUICOM)">Universidad Internacional de las Comunicaciones (LAUICOM)</option>
+                <option value="Universidad Nacional Abierta (UNA)">Universidad Nacional Abierta (UNA)</option>
+                <option value="Universidad del Zulia (LUZ)">Universidad del Zulia (LUZ)</option>
+                <option value="Universidad de Oriente (UDO)">Universidad de Oriente (UDO)</option>
+                <option value="Universidad de Carabobo (UC)">Universidad de Carabobo (UC)</option>
+                <option value="Universidad Simón Bolívar (USB)">Universidad Simón Bolívar (USB)</option>
+                <option value="Universidad de Los Andes (ULA)">Universidad de Los Andes (ULA)</option>
+                <option value="Universidad Central de Venezuela (UCV)">Universidad Central de Venezuela (UCV)</option>
+                <option value="Universidad Centro Occidental Lisandro Alvarado (UCLA)">Universidad Centro Occidental Lisandro Alvarado (UCLA)</option>
+              </optgroup>
+
+              <optgroup label="Universidades Politécnicas Territoriales" data-type="Universidades Politécnicas Territoriales">
+                <option value="UPT de Falcón Alonso Gamero (UPTAG)">UPT de Falcón Alonso Gamero (UPTAG)</option>
+                <option value="UPT del Norte de Monagas Ludovico Silva (UMLS)">UPT del Norte de Monagas Ludovico Silva (UMLS)</option>
+                <option value="UPT del estado Portuguesa Juan de Jesús Montilla (UPJM)">UPT del estado Portuguesa Juan de Jesús Montilla (UPJM)</option>
+                <option value="UPT del Oeste de Sucre Clodosbaldo Russián (UPTO)">UPT del Oeste de Sucre Clodosbaldo Russián (UPTO)</option>
+                <option value="UPT de Paria Luis Mariano Rivera (UPTP)">UPT de Paria Luis Mariano Rivera (UPTP)</option>
+                <option value="UPT del estado Mérida Kléber Ramírez (UPTM)">UPT del estado Mérida Kléber Ramírez (UPTM)</option>
+                <option value="UPT de Yaracuy Arístides Bastidas (UPTYAB)">UPT de Yaracuy Arístides Bastidas (UPTYAB)</option>
+                <option value="UPT José Antonio Anzoátegui (UPTJAA)">UPT José Antonio Anzoátegui (UPTJAA)</option>
+                <option value="UPT del Zulia (UPTZ)">UPT del Zulia (UPTZ)</option>
+                <option value="UPT de Maracaibo (UPTMA)">UPT de Maracaibo (UPTMA)</option>
+                <option value="UPT del estado Trujillo Mario Briceño Iragorry (UPTTMBI)">UPT del estado Trujillo Mario Briceño Iragorry (UPTTMBI)</option>
+                <option value="UPT de Puerto Cabello (UPTPC)">UPT de Puerto Cabello (UPTPC)</option>
+                <option value="Universidad Territorial Deltaica Francisco Tamayo (UTDFT)">Universidad Territorial Deltaica Francisco Tamayo (UTDFT)</option>
+              </optgroup>
+
+              <optgroup label="Universidades Privadas" data-type="Universidades Privadas">
+                <option value="Universidad Gran Mariscal de Ayacucho (UGMA)">Universidad Gran Mariscal de Ayacucho (UGMA)</option>
+                <option value="Universidad Alejandro de Humboldt (UAH)">Universidad Alejandro de Humboldt (UAH)</option>
+                <option value="Universidad Alonso de Ojeda (UNIOJEDA)">Universidad Alonso de Ojeda (UNIOJEDA)</option>
+                <option value="Universidad Católica Andrés Bello (UCAB)">Universidad Católica Andrés Bello (UCAB)</option>
+                <option value="Universidad Metropolitana (UNIMET)">Universidad Metropolitana (UNIMET)</option>
+                <option value="Universidad Monteávila (UMA)">Universidad Monteávila (UMA)</option>
+                <option value="Universidad Nueva Esparta (UNE)">Universidad Nueva Esparta (UNE)</option>
+                <option value="Universidad Santa María (USM)">Universidad Santa María (USM)</option>
+                <option value="Universidad Tecnológica del Centro (UNITEC)">Universidad Tecnológica del Centro (UNITEC)</option>
+                <option value="Universidad José María Vargas (UJMV)">Universidad José María Vargas (UJMV)</option>
+                <option value="Universidad Rafael Urdaneta (URU)">Universidad Rafael Urdaneta (URU)</option>
+                <option value="Universidad Rafael Belloso Chacín (URBE)">Universidad Rafael Belloso Chacín (URBE)</option>
+                <option value="Universidad Bicentenaria de Aragua (UBA)">Universidad Bicentenaria de Aragua (UBA)</option>
+                <option value="Universidad Fermín Toro (UFT)">Universidad Fermín Toro (UFT)</option>
+                <option value="Universidad de Falcón (UDEFA)">Universidad de Falcón (UDEFA)</option>
+                <option value="Universidad Católica del Táchira (UCAT)">Universidad Católica del Táchira (UCAT)</option>
+                <option value="Universidad Católica Cecilio Acosta">Universidad Católica Cecilio Acosta</option>
+                <option value="Universidad de Margarita (UNIMAR)">Universidad de Margarita (UNIMAR)</option>
+                <option value="Universidad José Antonio Páez (UJAP)">Universidad José Antonio Páez (UJAP)</option>
+                <option value="Universidad Privada Arturo Michelena (UAM)">Universidad Privada Arturo Michelena (UAM)</option>
+                <option value="Universidad Panamericana del Puerto (UNIPAP)">Universidad Panamericana del Puerto (UNIPAP)</option>
+                <option value="Universidad Santa Inés (USI)">Universidad Santa Inés (USI)</option>
+                <option value="Universidad Valle del Momboy (UVM)">Universidad Valle del Momboy (UVM)</option>
+                <option value="Universidad Yacambú (UNY)">Universidad Yacambú (UNY)</option>
+                <option value="Universidad Tecnológica Sucre">Universidad Tecnológica Sucre</option>
+              </optgroup>
+
+              <optgroup label="Institutos Universitarios y Colegios Universitarios (Selección)" data-type="Institutos Universitarios y Colegios Universitarios (Selección)">
+                <option value="Instituto Universitario Politécnico Santiago Mariño (IUPSM)">Instituto Universitario Politécnico Santiago Mariño (IUPSM)</option>
+                <option value="Instituto Universitario de Tecnología Industrial (IUTI)">Instituto Universitario de Tecnología Industrial (IUTI)</option>
+                <option value="Instituto Universitario de Tecnología Juan Pablo Pérez Alfonso (IUTEPAL)">Instituto Universitario de Tecnología Juan Pablo Pérez Alfonso (IUTEPAL)</option>
+                <option value="Instituto Universitario de Tecnología Readic (UNIR)">Instituto Universitario de Tecnología Readic (UNIR)</option>
+                <option value="Instituto Universitario de Tecnología Antonio José de Sucre">Instituto Universitario de Tecnología Antonio José de Sucre</option>
+                <option value="Instituto Universitario de Tecnología de Administración Industrial (IUTA)">Instituto Universitario de Tecnología de Administración Industrial (IUTA)</option>
+                <option value="Instituto Universitario de Tecnología Industrial Rodolfo Loero Arismendi (IUTIRLA)">Instituto Universitario de Tecnología Industrial Rodolfo Loero Arismendi (IUTIRLA)</option>
+                <option value="Instituto Universitario de Mercadotecnia (ISUM)">Instituto Universitario de Mercadotecnia (ISUM)</option>
+                <option value="Instituto Universitario de Nuevas Profesiones (IUNP)">Instituto Universitario de Nuevas Profesiones (IUNP)</option>
+                <option value="Instituto Universitario de Tecnología Amazonas (IUTAMA)">Instituto Universitario de Tecnología Amazonas (IUTAMA)</option>
+                <option value="Instituto Universitario Adventista de Venezuela (IUNAV)">Instituto Universitario Adventista de Venezuela (IUNAV)</option>
+                <option value="Colegio Universitario Monseñor de Talavera (CUMT)">Colegio Universitario Monseñor de Talavera (CUMT)</option>
+                <option value="Instituto Universitario Eclesiástico Santo Tomás de Aquino (IUESTA)">Instituto Universitario Eclesiástico Santo Tomás de Aquino (IUESTA)</option>
+                <option value="Instituto Universitario de Tecnología de Valencia (IUTVAL)">Instituto Universitario de Tecnología de Valencia (IUTVAL)</option>
+                <option value="Instituto Universitario Tecnológico Américo Vespucio (IUTAV)">Instituto Universitario Tecnológico Américo Vespucio (IUTAV)</option>
+                <option value="Instituto Universitario de Tecnología Antonio Ricaurte (IUTAR)">Instituto Universitario de Tecnología Antonio Ricaurte (IUTAR)</option>
+                <option value="Instituto Universitario de Tecnología para la Informática">Instituto Universitario de Tecnología para la Informática</option>
+                <option value="Instituto Universitario de Gerencia y Tecnología (IUGT)">Instituto Universitario de Gerencia y Tecnología (IUGT)</option>
+                <option value="Instituto Universitario Jesús Obrero">Instituto Universitario Jesús Obrero</option>
+              </optgroup>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 2: Dimensión de Paz y Convivencia Universitaria -->
+      <section class="glass-panel p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 bg-white space-y-6">
+        <div class="flex items-start space-x-3 mb-2">
+          <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm shrink-0">
+            2
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-slate-900">Dimensión de Paz y Convivencia Universitaria</h3>
+            <p class="text-xs text-slate-500">Escala de 1 (Nunca) a 5 (Muy frecuentemente)</p>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <!-- 2.1 Conflictos verbales -->
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <p class="text-sm font-semibold text-slate-900 mb-3">
+              2.1 En los últimos 6 meses, ¿con qué frecuencia ha presenciado discusiones verbales agresivas (gritos, insultos) entre miembros de la comunidad dentro del campus?
+            </p>
+            <div class="grid grid-cols-5 gap-2 text-center text-xs">
+              <label class="cursor-pointer">
+                <input type="radio" name="verbal_conflicts" value="1" required class="sr-only peer">
+                <div class="p-2.5 rounded-lg border border-slate-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition font-medium hover:bg-slate-200">
+                  <span class="block text-base font-bold">1</span>
+                  Nunca
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="verbal_conflicts" value="2" class="sr-only peer">
+                <div class="p-2.5 rounded-lg border border-slate-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition font-medium hover:bg-slate-200">
+                  <span class="block text-base font-bold">2</span>
+                  Rara vez
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="verbal_conflicts" value="3" class="sr-only peer">
+                <div class="p-2.5 rounded-lg border border-slate-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition font-medium hover:bg-slate-200">
+                  <span class="block text-base font-bold">3</span>
+                  Ocasional
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="verbal_conflicts" value="4" class="sr-only peer">
+                <div class="p-2.5 rounded-lg border border-slate-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition font-medium hover:bg-slate-200">
+                  <span class="block text-base font-bold">4</span>
+                  Frecuente
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="verbal_conflicts" value="5" class="sr-only peer">
+                <div class="p-2.5 rounded-lg border border-slate-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition font-medium hover:bg-slate-200">
+                  <span class="block text-base font-bold">5</span>
+                  Muy frec.
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- 2.2 Agresiones físicas -->
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <p class="text-sm font-semibold text-slate-900 mb-3">
+              2.2 ¿Con qué frecuencia ha presenciado agresiones físicas (riñas, empujones, agresiones directas)?
+            </p>
+            <div class="grid grid-cols-5 gap-2 text-center text-xs">
+              <label class="cursor-pointer">
+                <input type="radio" name="physical_aggressions" value="1" required class="sr-only peer">
+                <div class="p-2.5 rounded-lg border border-slate-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition font-medium hover:bg-slate-200">
+                  <span class="block text-base font-bold">1</span>
+                  Nunca
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="physical_aggressions" value="2" class="sr-only peer">
+                <div class="p-2.5 rounded-lg border border-slate-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition font-medium hover:bg-slate-200">
+                  <span class="block text-base font-bold">2</span>
+                  Rara vez
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="physical_aggressions" value="3" class="sr-only peer">
+                <div class="p-2.5 rounded-lg border border-slate-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition font-medium hover:bg-slate-200">
+                  <span class="block text-base font-bold">3</span>
+                  Ocasional
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="physical_aggressions" value="4" class="sr-only peer">
+                <div class="p-2.5 rounded-lg border border-slate-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition font-medium hover:bg-slate-200">
+                  <span class="block text-base font-bold">4</span>
+                  Frecuente
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="physical_aggressions" value="5" class="sr-only peer">
+                <div class="p-2.5 rounded-lg border border-slate-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition font-medium hover:bg-slate-200">
+                  <span class="block text-base font-bold">5</span>
+                  Muy frec.
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- 2.3 Respeto por espacios comunes -->
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <p class="text-sm font-semibold text-slate-900 mb-3">
+              2.3 ¿Observa respeto por el cuidado de los espacios comunes (aulas, baños, biblioteca, comedor, áreas verdes)?
+            </p>
+            <div class="grid grid-cols-5 gap-2 text-center text-xs">
+              <label class="cursor-pointer">
+                <input type="radio" name="respect_common_spaces" value="1" required class="sr-only peer">
+                <div class="p-2.5 rounded-lg border border-slate-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition font-medium hover:bg-slate-200">
+                  <span class="block text-base font-bold">1</span>
+                  Nunca
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="respect_common_spaces" value="2" class="sr-only peer">
+                <div class="p-2.5 rounded-lg border border-slate-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition font-medium hover:bg-slate-200">
+                  <span class="block text-base font-bold">2</span>
+                  Rara vez
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="respect_common_spaces" value="3" class="sr-only peer">
+                <div class="p-2.5 rounded-lg border border-slate-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition font-medium hover:bg-slate-200">
+                  <span class="block text-base font-bold">3</span>
+                  Ocasional
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="respect_common_spaces" value="4" class="sr-only peer">
+                <div class="p-2.5 rounded-lg border border-slate-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition font-medium hover:bg-slate-200">
+                  <span class="block text-base font-bold">4</span>
+                  Frecuente
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="respect_common_spaces" value="5" class="sr-only peer">
+                <div class="p-2.5 rounded-lg border border-slate-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition font-medium hover:bg-slate-200">
+                  <span class="block text-base font-bold">5</span>
+                  Siempre
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- 2.4 Trato cordial -->
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <p class="text-sm font-semibold text-slate-900 mb-3">
+              2.4 ¿Siente que existe un trato cordial y de respeto mutuo entre estudiantes y el personal (docente, administrativo, obrero)?
+            </p>
+            <div class="grid grid-cols-5 gap-2 text-center text-xs">
+              <label class="cursor-pointer">
+                <input type="radio" name="cordial_treatment" value="1" required class="sr-only peer">
+                <div class="p-2.5 rounded-lg border border-slate-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition font-medium hover:bg-slate-200">
+                  <span class="block text-base font-bold">1</span>
+                  Nunca
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="cordial_treatment" value="2" class="sr-only peer">
+                <div class="p-2.5 rounded-lg border border-slate-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition font-medium hover:bg-slate-200">
+                  <span class="block text-base font-bold">2</span>
+                  Rara vez
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="cordial_treatment" value="3" class="sr-only peer">
+                <div class="p-2.5 rounded-lg border border-slate-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition font-medium hover:bg-slate-200">
+                  <span class="block text-base font-bold">3</span>
+                  Ocasional
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="cordial_treatment" value="4" class="sr-only peer">
+                <div class="p-2.5 rounded-lg border border-slate-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition font-medium hover:bg-slate-200">
+                  <span class="block text-base font-bold">4</span>
+                  Frecuente
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input type="radio" name="cordial_treatment" value="5" class="sr-only peer">
+                <div class="p-2.5 rounded-lg border border-slate-300 peer-checked:bg-blue-600 peer-checked:text-white peer-checked:border-blue-600 transition font-medium hover:bg-slate-200">
+                  <span class="block text-base font-bold">5</span>
+                  Siempre
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- 2.5 Canales institucionales pacíficos -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+              2.5 Cuando surgen conflictos académicos o administrativos, ¿considera que existen canales institucionales efectivos para resolverlos pacíficamente? <span class="text-red-500">*</span>
+            </label>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <label class="flex items-center space-x-2.5 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="peaceful_channels" value="Sí" required class="text-blue-600 focus:ring-blue-500">
+                <span class="text-sm font-medium">Sí, son efectivos</span>
+              </label>
+              <label class="flex items-center space-x-2.5 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="peaceful_channels" value="No" class="text-blue-600 focus:ring-blue-500">
+                <span class="text-sm font-medium">No, son inefectivos</span>
+              </label>
+              <label class="flex items-center space-x-2.5 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="peaceful_channels" value="Desconozco los canales" class="text-blue-600 focus:ring-blue-500">
+                <span class="text-sm font-medium">Desconozco los canales</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 3: Tolerancia y Diversidad Ideológica -->
+      <section class="glass-panel p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 bg-white space-y-6">
+        <div class="flex items-start space-x-3 mb-2">
+          <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm shrink-0">
+            3
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-slate-900">Tolerancia y Diversidad Ideológica</h3>
+            <p class="text-xs text-slate-500">Pluralismo, libertad de cátedra y convivencia pacífica de ideas</p>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <!-- 3.1 Expresión de opiniones -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+              3.1 ¿Se siente seguro(a) al expresar sus opiniones (políticas, sociales, académicas o religiosas) dentro de las instalaciones universitarias sin temor a represalias, burlas o aislamiento? <span class="text-red-500">*</span>
+            </label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+              <label class="flex items-center space-x-2.5 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="safe_expressing_opinions" value="Totalmente seguro" required class="text-blue-600">
+                <span class="text-sm">Totalmente seguro</span>
+              </label>
+              <label class="flex items-center space-x-2.5 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="safe_expressing_opinions" value="Medianamente seguro" class="text-blue-600">
+                <span class="text-sm">Medianamente seguro</span>
+              </label>
+              <label class="flex items-center space-x-2.5 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="safe_expressing_opinions" value="Inseguro" class="text-blue-600">
+                <span class="text-sm">Inseguro</span>
+              </label>
+              <label class="flex items-center space-x-2.5 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="safe_expressing_opinions" value="Totalmente inseguro" class="text-blue-600">
+                <span class="text-sm">Totalmente inseguro</span>
+              </label>
+              <label class="flex items-center space-x-2.5 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="safe_expressing_opinions" value="Prefiero no opinar" class="text-blue-600">
+                <span class="text-sm">Prefiero no opinar</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 3.2 Discriminación ideológica -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+              3.2 ¿Ha sido víctima o testigo de discriminación, acoso o exclusión hacia alguna persona dentro del campus por sus posturas ideológicas o políticas en el último año? <span class="text-red-500">*</span>
+            </label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+              <label class="flex items-center space-x-2.5 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="ideological_discrimination" value="Sí, he sido víctima" required class="text-blue-600">
+                <span class="text-sm">Sí, víctima</span>
+              </label>
+              <label class="flex items-center space-x-2.5 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="ideological_discrimination" value="Sí, he sido testigo" class="text-blue-600">
+                <span class="text-sm">Sí, testigo</span>
+              </label>
+              <label class="flex items-center space-x-2.5 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="ideological_discrimination" value="No, nunca" class="text-blue-600">
+                <span class="text-sm">No, nunca</span>
+              </label>
+              <label class="flex items-center space-x-2.5 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="ideological_discrimination" value="Prefiero no responder" class="text-blue-600">
+                <span class="text-sm">Prefiero no responder</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 3.3 Regla de salto (Solo Estudiantes) -->
+          <div id="studentConditionalQuestion" class="hidden p-4 rounded-xl bg-amber-50/70 border border-amber-200 transition-all">
+            <div class="flex items-center space-x-2 text-amber-800 text-xs font-bold uppercase tracking-wider mb-2">
+              <i class="fa-solid fa-graduation-cap"></i>
+              <span>Pregunta Exclusiva para Estudiantes (Regla de Salto)</span>
+            </div>
+            <label class="block text-sm font-semibold text-slate-900 mb-2">
+              3.3 ¿Siente que sus calificaciones o su trato con los docentes pueden verse afectados negativamente si usted piensa distinto a ellos?
+            </label>
+            <div class="flex items-center space-x-4">
+              <label class="flex items-center space-x-2 p-2 px-3 rounded-lg bg-white border border-slate-200 cursor-pointer">
+                <input type="radio" name="grades_affected_divergence" value="Sí" class="text-blue-600">
+                <span class="text-sm font-medium">Sí, temo represalias</span>
+              </label>
+              <label class="flex items-center space-x-2 p-2 px-3 rounded-lg bg-white border border-slate-200 cursor-pointer">
+                <input type="radio" name="grades_affected_divergence" value="No" class="text-blue-600">
+                <span class="text-sm font-medium">No, hay libertad plena</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 3.4 Actitud general en procesos grupales -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+              3.4 Durante procesos grupales (asambleas, elecciones universitarias, debates de pasillo), ¿cómo calificaría la actitud general de la comunidad? <span class="text-red-500">*</span>
+            </label>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              <label class="flex items-center space-x-2.5 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="group_dialogue_attitude" value="Altamente tolerante y dispuesta al diálogo" required class="text-blue-600">
+                <span class="text-sm">Tolerante y dialogante</span>
+              </label>
+              <label class="flex items-center space-x-2.5 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="group_dialogue_attitude" value="Indiferente / Apática" class="text-blue-600">
+                <span class="text-sm">Indiferente / Apática</span>
+              </label>
+              <label class="flex items-center space-x-2.5 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="group_dialogue_attitude" value="Intolerante y propensa a la imposición o el conflicto" class="text-blue-600">
+                <span class="text-sm">Intolerante / Conflicto</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 4: Percepción de Seguridad e Identificación Geoespacial (GIS) -->
+      <section class="glass-panel p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 bg-white space-y-6">
+        <div class="flex items-start space-x-3 mb-2">
+          <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm shrink-0">
+            4
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-slate-900">Percepción de Seguridad e Identificación Espacial</h3>
+            <p class="text-xs text-slate-500">Componente de Sistema de Información Geográfica (Cartografía de Convivencia)</p>
+          </div>
+        </div>
+
+        <div class="space-y-6">
+          <!-- 4.1 Percepción General (1 a 10) -->
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="flex justify-between items-center mb-2">
+              <label class="text-sm font-semibold text-slate-900">
+                4.1 En una escala del 1 al 10, ¿qué tan seguro(a) se siente físicamente dentro del recinto universitario?
+              </label>
+              <span id="safetyScoreDisplay" class="text-lg font-extrabold text-blue-600 bg-blue-50 px-3 py-0.5 rounded-lg border border-blue-200">
+                7 / 10
+              </span>
+            </div>
+            <input type="range" id="safetyScore" min="1" max="10" value="7" class="w-full h-2.5 bg-slate-200 rounded-lg cursor-pointer">
+            <div class="flex justify-between text-xs text-slate-500 mt-1">
+              <span>1: Muy Inseguro</span>
+              <span>5: Regular</span>
+              <span>10: Totalmente Seguro</span>
+            </div>
+          </div>
+
+          <!-- 4.2 Víctima de Delito -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+              4.2 ¿Ha sido víctima directa o indirecta de algún delito (hurto, robo, vandalismo) dentro de la universidad en el último año? <span class="text-red-500">*</span>
+            </label>
+            <div class="flex items-center space-x-4">
+              <label class="flex items-center space-x-2.5 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer w-40">
+                <input type="radio" name="crime_victim" value="Sí" required class="text-blue-600">
+                <span class="text-sm font-medium">Sí, he sido víctima</span>
+              </label>
+              <label class="flex items-center space-x-2.5 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer w-40">
+                <input type="radio" name="crime_victim" value="No" class="text-blue-600">
+                <span class="text-sm font-medium">No, nunca</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 4.3 Iluminación Tarde-Noche -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+              4.3 ¿Cómo califica la iluminación general del campus en horas de la tarde-noche? <span class="text-red-500">*</span>
+            </label>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
+              <label class="p-2.5 text-center rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="night_lighting" value="Excelente" required class="sr-only peer">
+                <div class="peer-checked:font-bold peer-checked:text-emerald-700">Excelente</div>
+              </label>
+              <label class="p-2.5 text-center rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="night_lighting" value="Buena" class="sr-only peer">
+                <div class="peer-checked:font-bold peer-checked:text-green-700">Buena</div>
+              </label>
+              <label class="p-2.5 text-center rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="night_lighting" value="Regular" class="sr-only peer">
+                <div class="peer-checked:font-bold peer-checked:text-amber-700">Regular</div>
+              </label>
+              <label class="p-2.5 text-center rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="night_lighting" value="Deficiente" class="sr-only peer">
+                <div class="peer-checked:font-bold peer-checked:text-orange-700">Deficiente</div>
+              </label>
+              <label class="p-2.5 text-center rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="radio" name="night_lighting" value="Pésima" class="sr-only peer">
+                <div class="peer-checked:font-bold peer-checked:text-red-700">Pésima</div>
+              </label>
+            </div>
+          </div>
+
+          <!-- 4.4 MÓDULO DE MAPA INTERACTIVO GIS (Cuadrantes del Campus) -->
+          <div class="border border-slate-300 rounded-2xl p-4 sm:p-6 bg-slate-900 text-white">
+            <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+              <div>
+                <h4 class="text-sm font-bold flex items-center space-x-2">
+                  <i class="fa-solid fa-map-pin text-blue-400"></i>
+                  <span>4.4 Mapa Interactivo de Cuadrantes (Alimentador del Mapa de Calor)</span>
+                </h4>
+                <p class="text-xs text-slate-300 mt-0.5">
+                  Haz clic en las zonas o planos del campus donde percibes <strong>mayor inseguridad o riesgo de conflicto</strong> (máximo 3 zonas):
+                </p>
+              </div>
+              <div class="text-xs bg-slate-800 border border-slate-700 px-3 py-1 rounded-full">
+                Seleccionados: <span id="selectedCountBadge" class="font-bold text-amber-400">0 / 3</span>
+              </div>
+            </div>
+
+            <!-- Visualizador Interactivo Vectorial del Campus -->
+            <div class="relative bg-slate-950 rounded-xl overflow-hidden border border-slate-800 p-2 my-4">
+              <svg viewBox="0 0 800 450" class="w-full h-auto select-none rounded-lg" id="campusSvgMap">
+                <!-- Fondo del Campus -->
+                <rect width="800" height="450" fill="#0b132b" />
+                <!-- Caminerías y Ejes viales -->
+                <path d="M 50 225 L 750 225 M 400 30 L 400 420" stroke="#1e293b" stroke-width="24" stroke-linecap="round" />
+                <path d="M 50 225 L 750 225 M 400 30 L 400 420" stroke="#334155" stroke-width="4" stroke-dasharray="8 6" />
+
+                <!-- Polígonos interactivos de Cuadrantes -->
+                <!-- C1: Puerta Principal y Estacionamiento Este -->
+                <polygon id="poly-C1" points="430,40 760,40 760,200 430,200" fill="#1e3a8a" opacity="0.8" class="zone-polygon" data-id="C1" />
+                <text x="595" y="110" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" pointer-events="none">C1: Entrada / Estacionamiento Este</text>
+                <text x="595" y="130" fill="#93c5fd" font-size="10" text-anchor="middle" pointer-events="none">Paradas y acceso perimetral</text>
+
+                <!-- C2: Pasillos Aulas Norte y Rectorado -->
+                <polygon id="poly-C2" points="40,40 370,40 370,200 40,200" fill="#1e3a8a" opacity="0.8" class="zone-polygon" data-id="C2" />
+                <text x="205" y="110" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" pointer-events="none">C2: Pasillos Aulas Norte y Rectorado</text>
+                <text x="205" y="130" fill="#93c5fd" font-size="10" text-anchor="middle" pointer-events="none">Área académica y administrativa</text>
+
+                <!-- C3: Biblioteca Central y Plaza Cubierta -->
+                <polygon id="poly-C3" points="220,160 580,160 580,290 220,290" fill="#1d4ed8" opacity="0.85" class="zone-polygon" data-id="C3" />
+                <text x="400" y="220" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle" pointer-events="none">C3: Biblioteca Central & Plaza Cubierta</text>
+                <text x="400" y="240" fill="#bfdbfe" font-size="11" text-anchor="middle" pointer-events="none">Núcleo patrimonial y estudio masivo</text>
+
+                <!-- C4: Comedor Universitario y Talleres -->
+                <polygon id="poly-C4" points="40,240 200,240 200,340 40,340" fill="#1e3a8a" opacity="0.8" class="zone-polygon" data-id="C4" />
+                <text x="120" y="285" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle" pointer-events="none">C4: Comedor Central</text>
+                <text x="120" y="302" fill="#93c5fd" font-size="9" text-anchor="middle" pointer-events="none">Talleres y Servicios</text>
+
+                <!-- C5: Facultad de Ciencias y Galpones -->
+                <polygon id="poly-C5" points="40,355 200,355 200,425 40,425" fill="#1e3a8a" opacity="0.8" class="zone-polygon" data-id="C5" />
+                <text x="120" y="385" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle" pointer-events="none">C5: Ciencias / Labs</text>
+                <text x="120" y="402" fill="#93c5fd" font-size="9" text-anchor="middle" pointer-events="none">Pasillos Oeste</text>
+
+                <!-- C6: Complejo Deportivo y Estadios -->
+                <polygon id="poly-C6" points="600,240 760,240 760,340 600,340" fill="#1e3a8a" opacity="0.8" class="zone-polygon" data-id="C6" />
+                <text x="680" y="285" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle" pointer-events="none">C6: Polideportivo</text>
+                <text x="680" y="302" fill="#93c5fd" font-size="9" text-anchor="middle" pointer-events="none">Canchas y Estadios</text>
+
+                <!-- C7: Jardines Botánicos y Senderos Perimetrales -->
+                <polygon id="poly-C7" points="600,355 760,355 760,425 600,425" fill="#1e3a8a" opacity="0.8" class="zone-polygon" data-id="C7" />
+                <text x="680" y="385" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle" pointer-events="none">C7: Jardines Perímetro</text>
+                <text x="680" y="402" fill="#93c5fd" font-size="9" text-anchor="middle" pointer-events="none">Senderos Arbolados</text>
+
+                <!-- C8: Residencias y Centro de Salud -->
+                <polygon id="poly-C8" points="220,310 580,310 580,425 220,425" fill="#1e3a8a" opacity="0.8" class="zone-polygon" data-id="C8" />
+                <text x="400" y="365" fill="#ffffff" font-size="13" font-weight="bold" text-anchor="middle" pointer-events="none">C8: Residencias Estudiantiles & Salud</text>
+                <text x="400" y="385" fill="#93c5fd" font-size="10" text-anchor="middle" pointer-events="none">Módulos asistenciales y caminerías sur</text>
+              </svg>
+            </div>
+
+            <!-- Selector Alternativo en Botones / Tarjetas -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+              <button type="button" class="zone-btn text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 transition" data-id="C1">
+                <span class="font-bold block text-blue-400">C1. Entrada Este</span>
+                <span class="text-[11px] text-slate-300">Estacionamiento</span>
+              </button>
+              <button type="button" class="zone-btn text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 transition" data-id="C2">
+                <span class="font-bold block text-blue-400">C2. Pasillos Norte</span>
+                <span class="text-[11px] text-slate-300">Rectorado / Aulas</span>
+              </button>
+              <button type="button" class="zone-btn text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 transition" data-id="C3">
+                <span class="font-bold block text-blue-400">C3. Biblioteca</span>
+                <span class="text-[11px] text-slate-300">Plaza Cubierta</span>
+              </button>
+              <button type="button" class="zone-btn text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 transition" data-id="C4">
+                <span class="font-bold block text-blue-400">C4. Comedor</span>
+                <span class="text-[11px] text-slate-300">Talleres / Servicios</span>
+              </button>
+              <button type="button" class="zone-btn text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 transition" data-id="C5">
+                <span class="font-bold block text-blue-400">C5. Ciencias / Labs</span>
+                <span class="text-[11px] text-slate-300">Galpones Oeste</span>
+              </button>
+              <button type="button" class="zone-btn text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 transition" data-id="C6">
+                <span class="font-bold block text-blue-400">C6. Polideportivo</span>
+                <span class="text-[11px] text-slate-300">Canchas y Estadios</span>
+              </button>
+              <button type="button" class="zone-btn text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 transition" data-id="C7">
+                <span class="font-bold block text-blue-400">C7. Jardines</span>
+                <span class="text-[11px] text-slate-300">Senderos Perímetro</span>
+              </button>
+              <button type="button" class="zone-btn text-left p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 transition" data-id="C8">
+                <span class="font-bold block text-blue-400">C8. Residencias</span>
+                <span class="text-[11px] text-slate-300">Módulo Asistencial</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 4.5 Motivos de selección -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+              4.5 ¿Cuál es el motivo principal por el que seleccionó esos cuadrantes? (Selección múltiple)
+            </label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+              <label class="flex items-center space-x-2.5 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="checkbox" name="zone_reasons" value="Falta de iluminación/soledad de la zona." class="text-blue-600 rounded">
+                <span class="text-xs sm:text-sm">Falta de iluminación o soledad de la zona</span>
+              </label>
+              <label class="flex items-center space-x-2.5 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="checkbox" name="zone_reasons" value="Presencia frecuente de personas ajenas a la universidad." class="text-blue-600 rounded">
+                <span class="text-xs sm:text-sm">Presencia de personas ajenas al campus</span>
+              </label>
+              <label class="flex items-center space-x-2.5 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="checkbox" name="zone_reasons" value="Historial previo de robos o conflictos en esa área." class="text-blue-600 rounded">
+                <span class="text-xs sm:text-sm">Historial previo de robos o agresiones</span>
+              </label>
+              <label class="flex items-center space-x-2.5 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="checkbox" name="zone_reasons" value="Falta de patrullaje interno (personal de seguridad)." class="text-blue-600 rounded">
+                <span class="text-xs sm:text-sm">Ausencia de personal de vigilancia</span>
+              </label>
+              <label class="flex items-center space-x-2.5 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="checkbox" name="zone_reasons" value="En esa zona ocurren hurtos frecuentemente." class="text-blue-600 rounded">
+                <span class="text-xs sm:text-sm">En esa zona ocurren hurtos frecuentemente</span>
+              </label>
+              <label class="flex items-center space-x-2.5 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                <input type="checkbox" name="zone_reasons" value="Es un punto de reunión donde se generan roces o conflictos grupales." class="text-blue-600 rounded">
+                <span class="text-xs sm:text-sm">Punto de reunión donde se generan roces o peleas</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECCIÓN 5: Comentarios Cualitativos y Propuestas -->
+      <section class="glass-panel p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 bg-white space-y-4">
+        <div class="flex items-start space-x-3 mb-2">
+          <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm shrink-0">
+            5
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-slate-900">Propuestas y Comentarios Cualitativos</h3>
+            <p class="text-xs text-slate-500">Insumos para las mesas de trabajo y formulación de políticas institucionales</p>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+            5.1 Brevemente, ¿qué acción inmediata sugiere para mejorar la paz, la convivencia o la seguridad en su universidad? (Opcional)
+          </label>
+          <textarea id="improvementSuggestion" rows="3" placeholder="Ej: Mejorar luminarias en pasillo norte, reactivar mediación estudiantil, más patrullaje en turno nocturno..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:bg-white"></textarea>
+        </div>
+      </section>
+
+      <!-- Botón de Envío -->
+      <div class="pt-4 pb-12 flex items-center justify-end space-x-4">
+        <button type="reset" class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-100 font-medium text-sm transition">
+          Limpiar Formulario
+        </button>
+        <button type="submit" id="submitBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-xl shadow-lg hover:shadow-blue-500/25 transition transform active:scale-95 flex items-center space-x-2">
+          <i class="fa-solid fa-paper-plane text-sm"></i>
+          <span>Registrar Diagnóstico</span>
+        </button>
+      </div>
+
+    </form>
+  </main>
+
+  <!-- Modal de Éxito / Confirmación -->
+  <div id="successModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 text-center shadow-2xl animate-fade-in border border-slate-100">
+      <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner">
+        <i class="fa-solid fa-check"></i>
+      </div>
+      <h3 class="text-xl font-bold text-slate-900 mb-2">¡Diagnóstico Registrado con Éxito!</h3>
+      <p class="text-sm text-slate-600 mb-6 leading-relaxed">
+        Su aporte anónimo ha sido incorporado a la matriz de datos y al mapa de calor del Observatorio Universitario.
+      </p>
+      <div class="space-y-2">
+        <a href="cartografia.html" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-xl shadow-md transition text-sm">
+          <i class="fa-solid fa-map-location-dot mr-1.5"></i> Explorar Cartografía de Convivencia
+        </a>
+        <button type="button" id="closeSuccessModal" class="block w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2 px-4 rounded-xl transition text-sm">
+          Llenar Otra Encuesta (Modo Brigada)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pie de Página Institucional -->
+  <footer class="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:flex sm:justify-between sm:items-center">
+      <p>&copy; 2026 Observatorio de Paz y Convivencia Democrática Universitaria &bull; Sede Caracas</p>
+      <div class="mt-2 sm:mt-0 space-x-4">
+        <span>Confidencialidad Garantizada</span>
+        <a href="admin.html" class="hover:text-blue-400">Acceso Comité Directivo</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/survey.js"></script>
+  <script src="/static/js/survey.js"></script>
+  <script>
+    // Script de sincronización inmediata para el listado de universidades
+    (function() {
+      const typeSel = document.getElementById('userInstitutionType');
+      const nameSel = document.getElementById('userInstitutionName');
+      if (!typeSel || !nameSel) return;
+
+      function filterInstitutions() {
+        const val = typeSel.value;
+        const groups = nameSel.querySelectorAll('optgroup');
+        groups.forEach(g => {
+          const match = (!val || g.getAttribute('data-type') === val);
+          g.style.display = match ? '' : 'none';
+          g.disabled = !match;
+          Array.from(g.children).forEach(o => o.hidden = !match);
+        });
+        const currentOpt = nameSel.selectedOptions[0];
+        if (currentOpt && currentOpt.parentElement && currentOpt.parentElement.tagName === 'OPTGROUP' && currentOpt.parentElement.disabled) {
+          nameSel.value = '';
+        }
+      }
+
+      typeSel.addEventListener('change', filterInstitutions);
+
+      nameSel.addEventListener('change', function() {
+        const sel = nameSel.selectedOptions[0];
+        if (sel && sel.parentElement && sel.parentElement.tagName === 'OPTGROUP') {
+          const pType = sel.parentElement.getAttribute('data-type');
+          if (pType && typeSel.value !== pType) {
+            typeSel.value = pType;
+            filterInstitutions();
+            nameSel.value = sel.value;
+          }
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

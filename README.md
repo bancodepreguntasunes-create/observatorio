@@ -5,6 +5,26 @@
 
 ---
 
+## 🌐 Despliegue en Vercel (Producción en la Nube)
+
+El proyecto está 100% adaptado para **Vercel** usando Serverless Functions en Python con FastAPI y compatibilidad de almacenamiento temporal (`/tmp`):
+
+### Opción A: Desde GitHub (Recomendado)
+1. Sube este proyecto a tu cuenta de **GitHub** (ej. repositorio público o privado `observatorio-paz`).
+2. Entra a [vercel.com](https://vercel.com) e inicia sesión con GitHub.
+3. Haz clic en **"Add New Project"** y selecciona tu repositorio.
+4. Vercel detectará automáticamente el archivo `vercel.json` y el runtime `@vercel/python`.
+5. Haz clic en **"Deploy"**. En 60 segundos tu observatorio estará publicado con un enlace `https://tu-proyecto.vercel.app`.
+
+### Opción B: Mediante Vercel CLI (Terminal)
+Si tienes Node.js o Vercel CLI instalado:
+```bash
+npx vercel
+```
+Presiona `Enter` para aceptar la configuración por defecto y el despliegue comenzará de inmediato.
+
+---
+
 ## 🎯 Visión General del Proyecto
 
 El **Observatorio de Paz y Convivencia Democrática Universitaria** es una plataforma tecnológica desarrollada para diagnosticar, espacializar y analizar la convivencia, la paz y la percepción de seguridad en el entorno universitario. Proporciona insumos empíricos de alta fidelidad para sustentar políticas académicas, bienestar institucional y la toma de decisiones gerenciales del Consejo Universitario.
