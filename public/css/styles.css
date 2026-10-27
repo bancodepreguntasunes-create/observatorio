@@ -1474,3 +1474,200 @@ tbody tr:hover {
     backdrop-filter: none;
   }
 }
+
+
+/* ── Mobile usability improvements (2026-10) ── */
+html {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+img, svg, video, canvas, iframe {
+  max-width: 100%;
+}
+input, select, textarea, button {
+  max-width: 100%;
+}
+.container, .container-narrow {
+  width: 100%;
+  box-sizing: border-box;
+}
+.card, .card-header, .form-group, .form-check, .alert, .consent-box {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.form-select, input[type="text"], input[type="email"], input[type="number"],
+input[type="tel"], textarea, select {
+  box-sizing: border-box;
+  width: 100%;
+}
+.navbar-inner {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+}
+.navbar-brand {
+  min-width: 0;
+  max-width: 100%;
+}
+.navbar-brand span:last-child {
+  overflow-wrap: anywhere;
+}
+.stepper {
+  max-width: 100%;
+  box-sizing: border-box;
+  scrollbar-width: thin;
+}
+.stepper-step {
+  flex-shrink: 0;
+}
+.likert-labels {
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.btn {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px 0;
+  }
+  .navbar-inner {
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .navbar-brand {
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+  /* Keep navigation usable on phones instead of hiding all links. */
+  .navbar-links {
+    display: flex !important;
+    width: 100%;
+    max-width: 100%;
+    padding: 0 0 6px;
+    margin: 0;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  .navbar-links li {
+    flex: 0 0 auto;
+  }
+  .navbar-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 11px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+  .container, .container-narrow {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+  .hero h1 {
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+  .hero p {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  .card {
+    padding: 16px;
+    border-radius: 14px;
+  }
+  .card-header {
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .card-title {
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+  .stepper {
+    gap: 8px;
+    padding-bottom: 8px;
+  }
+  .stepper-step {
+    min-width: max-content;
+  }
+  .stepper-divider {
+    flex: 0 0 12px;
+  }
+  .flex-between {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .flex-between .btn,
+  .flex-center .btn {
+    min-height: 44px;
+  }
+  .likert-labels {
+    justify-content: space-between;
+    font-size: 0.75rem;
+  }
+  .consent-box {
+    max-height: 42vh;
+    padding: 14px;
+  }
+}
+@media (max-width: 480px) {
+  .navbar-brand {
+    font-size: 0.95rem;
+  }
+  .navbar-brand .brand-icon {
+    flex: 0 0 auto;
+  }
+  .hero {
+    padding-top: 22px;
+  }
+  .step-badge {
+    white-space: normal;
+    line-height: 1.4;
+  }
+  .card {
+    padding: 14px;
+  }
+  .card-header {
+    flex-direction: row;
+  }
+  .card-icon {
+    flex: 0 0 38px;
+  }
+  .form-check {
+    align-items: flex-start;
+  }
+  .form-check input {
+    flex: 0 0 auto;
+    margin-top: 3px;
+  }
+  .likert-group {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 4px;
+  }
+  .likert-option {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .likert-option label {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .toast {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
